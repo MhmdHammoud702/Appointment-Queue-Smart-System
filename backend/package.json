@@ -1,0 +1,45 @@
+{
+  "name": "smart-appointment-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A lightweight DDD backend for appointment and queue management.",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/src/server.js",
+    "dev": "tsx watch src/server.ts",
+    "seed:admin": "tsx src/infrastructure/database/seedAdmin.ts",
+    "test:socket": "node --import tsx --test test/realtime/socket.test.ts",
+    "test": "node --import tsx --test test/domain/appointment.test.ts test/domain/queue.test.ts test/domain/time.test.ts test/presentation/app.test.ts test/presentation/validation.test.ts",
+    "test:appointment-concurrency": "node --import tsx --test test/integration/appointment-concurrency.test.ts",
+    "test:watch": "node --import tsx --test --watch test/domain/appointment.test.ts test/domain/queue.test.ts test/domain/time.test.ts test/presentation/app.test.ts test/presentation/validation.test.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.1",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^10.1.7",
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.7.2",
+    "@types/nodemailer": "^7.0.3",
+    "@types/supertest": "^6.0.3",
+    "socket.io-client": "^4.8.4",
+    "supertest": "^7.1.4",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

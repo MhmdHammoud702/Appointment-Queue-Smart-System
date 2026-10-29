@@ -1,0 +1,6 @@
+.status-badge { display: inline-flex; align-items: center; padding: 4px 7px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.status-confirmed, .status-completed, .status-active { background: #e5f5ee; color: #248b60; }
+.status-pending, .status-waiting { background: #fff4e6; color: #bf7a23; }
+.status-checked-in, .status-in-service { background: #e9f1ff; color: #4a74b5; }
+.status-cancelled, .status-no-show { background: #fcebea; color: #bf5b57; }
+.status-inactive { background: #edf0f3; color: #68778a; }

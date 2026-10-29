@@ -1,0 +1,6 @@
+@import "./AP_Field.css";
+
+.toolbar-field { width: 240px; }
+.toolbar-field .form-field { font-size: 0; }
+.toolbar-field .ap-input { height: 32px; margin-top: 0; font-size: 12px; }
+.toolbar-field .field-error, .toolbar-field .field-help { display: none; }

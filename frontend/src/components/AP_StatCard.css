@@ -1,0 +1,28 @@
+.stat-card { display: flex; align-items: flex-start; gap: 10px; min-width: 0; padding: 14px 12px; border: 1px solid #e8edf1; border-radius: 7px; background: #fff; box-shadow: var(--panel-shadow); }
+.stat-icon { width: 29px; height: 29px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 7px; font-size: 15px; font-weight: 700; }
+.stat-icon.teal { background: #e3f6f4; color: #078e89; }
+.stat-icon.blue { background: #eaf1ff; color: #427ac1; }
+.stat-icon.orange { background: #fff2e4; color: #e08b40; }
+.stat-icon.purple { background: #f1eafd; color: #8a63c7; }
+.stat-icon.green { background: #e7f6ed; color: #339d6e; }
+.stat-copy { min-width: 0; }
+.stat-copy p { margin: 1px 0 6px; color: #7f8c9c; font-size: 11px; white-space: nowrap; }
+.stat-copy strong { display: block; color: #1c2d43; font-family: "Manrope", sans-serif; font-size: 22px; line-height: 1; }
+.stat-copy small { display: block; margin-top: 6px; color: #92a0ad; font-size: 11px; white-space: nowrap; }
+.stat-arrow { margin-left: auto; color: #b6c0ca; font-size: 13px; }
+
+@media (max-width: 1120px) {
+  .stat-card { gap: 7px; }
+  .stat-icon { width: 25px; height: 25px; }
+  .stat-copy p, .stat-copy small { font-size: 10px; }
+  .stat-copy strong { font-size: 20px; }
+  .stat-arrow { display: none; }
+}
+
+@media (max-width: 760px) {
+  .stat-card { gap: 7px; }
+  .stat-card { padding: 11px 8px; }
+  .stat-icon { width: 25px; height: 25px; }
+  .stat-copy p, .stat-copy small { font-size: 10px; }
+  .stat-copy strong { font-size: 20px; }
+}

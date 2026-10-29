@@ -1,0 +1,12 @@
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 34px; padding: 0 13px; border: 1px solid transparent; border-radius: 5px; font-size: 13px; font-weight: 600; transition: background .15s, border-color .15s; }
+.button-primary { border-color: #098a88; background: #0c9995; color: #fff; box-shadow: 0 2px 4px rgba(12, 153, 149, .14); }
+.button-primary:hover { background: #087f7c; }
+.button-outline { border-color: #dfe5eb; background: #fff; color: #45566b; }
+.button-outline:hover { border-color: #9bb9bb; background: #f8fbfb; }
+.button-danger { border-color: #f1d4d3; background: #fff; color: #c65a55; }
+.button-danger:hover { background: #fff7f6; }
+.button-text { min-height: 0; padding: 0; border: 0; background: transparent; color: #098d89; font-size: 12px; font-weight: 600; }
+.button-text:hover { color: #087f7c; }
+.button-small { min-height: 27px; padding: 0 8px; font-size: 11px; }
+.button:disabled { cursor: not-allowed; opacity: .58; }
+.full-width { width: 100%; }

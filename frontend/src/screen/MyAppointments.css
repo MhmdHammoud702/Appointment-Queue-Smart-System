@@ -1,0 +1,18 @@
+.appointments-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 35px; margin: 0 0 14px; }
+.appointments-empty { padding: 28px; color: #8491a0; text-align: center; font-size: 13px; }
+.my-appointment-list { display: grid; gap: 13px; }
+.my-appointment-card { display: flex; align-items: flex-start; gap: 15px; padding: 17px; }
+.appointment-date { width: 47px; height: 49px; display: flex; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; border-radius: 6px; background: #edf8f7; color: #148a85; }
+.appointment-date strong { font-size: 14px; }
+.appointment-date span { margin-top: 3px; font-size: 11px; }
+.my-appointment-details { flex: 1; }
+.appointment-card-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.appointment-card-heading h2 { margin: 0; color: #304158; font-size: 13px; }
+.my-appointment-details > p { margin: 7px 0 0; color: #7f8b9b; font-size: 12px; }
+.card-actions { display: flex; gap: 8px; margin-top: 13px; }
+.card-actions .button { min-height: 29px; font-size: 12px; }
+
+@media (max-width: 460px) {
+  .my-appointment-card { gap: 10px; padding: 12px; }
+  .appointment-card-heading { align-items: flex-start; flex-direction: column; }
+}

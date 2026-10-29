@@ -1,0 +1,5 @@
+.services-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 35px; margin: 0 0 14px; }
+.services-table-panel { padding: 5px 15px; }
+.service-actions { display: flex; gap: 5px; }
+.checkbox-label { display: flex; align-items: center; gap: 7px; color: #718094; font-size: 12px; }
+.checkbox-label input { accent-color: #0c9995; }

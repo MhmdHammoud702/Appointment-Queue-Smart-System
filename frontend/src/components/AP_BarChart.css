@@ -1,0 +1,6 @@
+.chart { height: 150px; display: flex; align-items: stretch; gap: 15px; padding: 10px 8px 0; border-bottom: 1px solid #edf0f3; background: repeating-linear-gradient(to bottom, transparent 0, transparent 36px, #f1f3f5 37px); }
+.chart-column { display: flex; flex: 1; flex-direction: column; align-items: center; gap: 6px; color: #8b97a5; font-size: 11px; }
+.chart-bar-track { width: 100%; height: 125px; display: flex; align-items: flex-end; justify-content: center; }
+.chart-bar { width: min(28px, 70%); min-height: 4px; border-radius: 3px 3px 0 0; background: #a9dcd8; transition: background .15s; }
+.chart-bar:hover { background: #62c2bb; }
+.chart-bar.today { background: #0e9c98; }

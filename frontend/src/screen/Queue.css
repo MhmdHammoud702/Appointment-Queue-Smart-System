@@ -1,0 +1,446 @@
+.queue-page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 13px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid #e8edf1;
+}
+
+.queue-page-title {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 11px;
+}
+
+.queue-page-title h1 {
+  margin: 0;
+  color: #24354a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.queue-page-title > span {
+  overflow: hidden;
+  color: #8290a1;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.queue-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 35px;
+  margin: 0 0 14px;
+}
+
+.queue-toolbar-actions,
+.queue-status-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.queue-status-strip {
+  color: #78869a;
+  font-size: 11px;
+}
+
+.queue-updated-time {
+  color: #8290a1;
+  font-size: 10px;
+}
+
+.queue-live-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #7a8798;
+  font-size: 11px;
+}
+
+.queue-polling-note {
+  color: #8995a4;
+  font-size: 10px;
+}
+
+.live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #27a77b;
+  box-shadow: 0 0 0 3px #e1f4ec;
+}
+
+.queue-date-field {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #647489;
+  font-size: 11px;
+}
+
+.queue-date-field input {
+  min-height: 34px;
+  padding: 5px 8px;
+  border: 1px solid #dfe5eb;
+  border-radius: 5px;
+  background: #fff;
+  color: #34465c;
+  font-size: 11px;
+}
+
+.receptionist-queue-toolbar {
+  justify-content: flex-start;
+}
+
+.queue-checkin-panel {
+  min-width: 0;
+  padding: 14px;
+}
+
+.queue-checkin-panel .panel-heading {
+  align-items: flex-start;
+  padding: 0;
+}
+
+.queue-admin-checkin .panel-heading {
+  margin-bottom: 12px;
+}
+
+.queue-checkin-panel .panel-heading h2 {
+  margin-bottom: 3px;
+  font-size: 12px;
+}
+
+.queue-checkin-panel .panel-heading p {
+  font-size: 10px;
+}
+
+.queue-checkin-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.queue-checkin-form .ap-field {
+  min-width: 0;
+  margin: 0;
+}
+
+.queue-checkin-form .form-field {
+  font-size: 10px;
+}
+
+.queue-checkin-form .ap-input {
+  min-height: 34px;
+  font-size: 11px;
+}
+
+.queue-checkin-form .button {
+  align-self: flex-start;
+  min-height: 30px;
+  margin: 0;
+}
+
+.queue-checkin-hint,
+.queue-last-checkin {
+  display: block;
+  margin: 8px 0 0;
+  color: #8793a2;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.queue-checkin-error {
+  margin: 8px 0 0;
+  color: #b54747;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.queue-day-note {
+  margin: 0 0 10px;
+  color: #8995a4;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.queue-action-error {
+  margin: 9px 0 12px;
+  color: #b54747;
+  font-size: 11px;
+}
+
+.queue-action-success {
+  margin: 8px 0 0;
+  color: #087f68;
+  font-size: 10px;
+}
+
+.queue-global-action-error,
+.queue-global-action-success {
+  margin: 0 0 12px;
+}
+
+.queue-ready-count {
+  padding: 5px 8px;
+  border-radius: 12px;
+  background: #e9f7f2;
+  color: #148365;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.queue-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.queue-stage-admin,
+.queue-stage-receptionist {
+  grid-template-columns: minmax(205px, 0.9fr) minmax(0, 2.2fr);
+  align-items: stretch;
+}
+
+.queue-service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: stretch;
+  gap: 10px;
+}
+
+.queue-service-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 12px;
+  border-color: #bfe4df;
+  background: #f7fcfb;
+}
+
+.queue-service-card-top {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+}
+
+.queue-service-card-top > strong {
+  color: #34465c;
+  font-size: 10px;
+}
+
+.queue-service-card .status-badge {
+  padding: 3px 6px;
+  font-size: 9px;
+}
+
+.queue-service-number {
+  color: #087f7c;
+  font-family: "Manrope", sans-serif;
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.queue-service-card .queue-service-customer {
+  color: #26384e;
+  font-size: 11px;
+}
+
+.queue-service-name {
+  min-height: 24px;
+  color: #748297;
+  font-size: 10px;
+}
+
+.queue-service-card > small {
+  color: #8793a2;
+  font-size: 9px;
+}
+
+.queue-service-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 3px;
+  padding: 4px 7px;
+  border-radius: 12px;
+  background: #e8f7f3;
+  color: #187b69;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.queue-service-time .live-dot {
+  width: 6px;
+  height: 6px;
+  box-shadow: none;
+}
+
+.queue-service-card .queue-complete-button {
+  width: 100%;
+  min-height: 28px;
+  margin-top: auto;
+  font-size: 10px;
+}
+
+.queue-service-empty {
+  display: flex;
+  min-height: 155px;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #8995a4;
+  font-size: 11px;
+  text-align: center;
+}
+
+.queue-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 10px;
+}
+
+.queue-section-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #25364b;
+  font-size: 13px;
+}
+
+.queue-section-heading p {
+  margin: 4px 0 0;
+  color: #8995a4;
+  font-size: 10px;
+}
+
+.queue-section-heading > span {
+  color: #778699;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.queue-table-panel {
+  padding: 12px 12px 4px;
+}
+
+.queue-waiting-heading {
+  padding: 0 5px;
+  margin-bottom: 8px;
+}
+
+.queue-waiting-heading h2 span {
+  display: inline-flex;
+  min-width: 19px;
+  height: 19px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  border-radius: 5px;
+  background: #edf2f5;
+  color: #647489;
+  font-size: 10px;
+}
+
+.queue-table-panel .table-scroll th {
+  padding: 7px 8px;
+  font-size: 9px;
+}
+
+.queue-table-panel .table-scroll td {
+  padding: 7px 8px;
+  font-size: 10px;
+}
+
+.queue-table-panel .table-footer {
+  min-height: 31px;
+  font-size: 10px;
+}
+
+.queue-number {
+  color: #087f7c;
+  font-weight: 700;
+}
+
+.strong-cell {
+  color: #34465c;
+  font-weight: 600;
+}
+
+@media (max-width: 1000px) {
+  .queue-stage-admin,
+  .queue-stage-receptionist {
+    grid-template-columns: minmax(185px, 0.9fr) minmax(0, 1.8fr);
+  }
+
+  .queue-service-grid {
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .queue-page-heading {
+    align-items: flex-start;
+  }
+
+  .queue-page-title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .queue-stage-admin,
+  .queue-stage-receptionist {
+    grid-template-columns: 1fr;
+  }
+
+  .queue-service-grid {
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .queue-toolbar {
+    align-items: flex-start;
+  }
+
+  .queue-page-heading {
+    flex-wrap: wrap;
+  }
+
+  .queue-toolbar-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .queue-polling-note {
+    display: none;
+  }
+
+  .queue-status-strip {
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .queue-table-panel .table-scroll td {
+    padding: 7px 6px;
+  }
+}

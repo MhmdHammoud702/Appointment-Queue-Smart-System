@@ -1,0 +1,31 @@
+.date-filter { height: 31px; padding: 0 10px; border: 1px solid #e3e8ed; border-radius: 5px; background: #fff; color: #536378; font-size: 12px; }
+.date-range { display: flex; align-items: center; gap: 8px; }
+.date-range label { display: flex; align-items: center; gap: 5px; color: #78869a; font-size: 11px; }
+.date-range input { height: 30px; padding: 0 6px; border: 1px solid #e3e8ed; border-radius: 5px; color: #536378; font-size: 12px; }
+.dashboard-empty { padding: 16px 0; color: #8491a0; font-size: 12px; text-align: center; }
+.stats-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 15px; }
+.dashboard-panels { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(270px, .85fr); gap: 14px; }
+.chart-panel, .live-queue-panel { min-height: 225px; padding: 17px 18px 15px; }
+.icon-button { padding: 0 5px; border: 0; background: transparent; color: #8895a4; font-size: 21px; line-height: 13px; }
+.queue-preview { margin: 7px 0 12px; }
+.queue-preview-row { display: flex; align-items: center; gap: 9px; padding: 10px 0; border-bottom: 1px solid #eff2f5; }
+.queue-person { min-width: 0; flex: 1; }
+.queue-person strong, .queue-person small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.queue-person strong { color: #35465b; font-size: 12px; font-weight: 600; }
+.queue-person small { margin-top: 3px; color: #929eaa; font-size: 11px; }
+.wait-time { color: #7f8b9b; font-size: 12px; }
+.appointments-panel { grid-column: 1 / -1; padding: 17px 18px 5px; }
+.appointments-panel .panel-heading { align-items: center; }
+
+@media (max-width: 760px) {
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .dashboard-panels { grid-template-columns: 1fr; }
+  .appointments-panel { grid-column: auto; }
+  .chart-panel, .live-queue-panel { min-height: auto; }
+}
+
+@media (max-width: 460px) {
+  .screen-toolbar { align-items: flex-start; }
+  .date-range { flex-wrap: wrap; }
+  .date-range label { flex-direction: column; align-items: flex-start; }
+}
