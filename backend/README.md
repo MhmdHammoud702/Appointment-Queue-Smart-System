@@ -66,6 +66,19 @@ overlapping booking, and races direct writes against the unique index. It logs
 the outcomes and drops only the database it created. Do not point
 `TEST_MONGODB_URI` at a production MongoDB server.
 
+To specifically test two customers booking different services with the same
+staff member at overlapping times on October 30, 2026, run:
+
+```powershell
+$env:TEST_MONGODB_URI = "mongodb://127.0.0.1:27017/?replicaSet=rs0"
+npm run test:overlap-services
+```
+
+This test books a 30-minute service from 10:00 to 10:30, verifies the other
+service's 10:15 slot is unavailable, and confirms a second customer receives
+`409 SLOT_UNAVAILABLE` for that overlapping time. It uses and drops its own
+uniquely named test database; do not use a production MongoDB server.
+
 ## Project structure
 
 ```text
@@ -111,11 +124,21 @@ The OpenAPI specification is in [`docs/openapi.yaml`](./docs/openapi.yaml).
 | `GET` | `/users/staff?serviceId=<id>` | Signed in |
 | `POST` | `/users/staff` | Admin |
 | `POST` | `/users/receptionists` | Admin |
+| `GET` | `/users/employees` | Admin; includes active and deactivated Staff/Receptionist accounts |
+| `PATCH` | `/users/employees/:id/status` | Admin; body `{ "active": false }` deactivates, `true` reactivates |
+| `DELETE` | `/users/staff/:id` | Admin; requires deactivation first and preserves appointment history |
 
 Registration body: `{ "fullName": "Maya Haddad", "email": "maya@example.com", "phone": "+961 71 123456", "password": "at-least-8-characters" }`. Login body: `{ "email": "maya@example.com", "password": "..." }`. Staff creation uses the registration fields; the server assigns the Staff role.
 Receptionist creation uses the same registration fields; the server assigns the Receptionist role.
+Deactivated employee accounts retain their schedules and appointment history and are disconnected from realtime updates. Staff deactivation also cancels all future Pending, Confirmed, and Checked In appointments, releases their reserved times, cancels related queue entries, and emails affected customers with a booking link. Completed and past appointments remain unchanged. The status response includes the cancellation and notification-failure counts; configure SMTP to deliver the emails. Receptionist deactivation does not affect appointments. Admins can reactivate accounts from the Staff page.
+
+Admins can permanently delete a deactivated Staff account from the Staff page. Deactivation must happen first so future appointments are cancelled and customers notified. Deletion removes the Staff account and schedule, but leaves appointments and queue history intact with a `staffNameSnapshot` for historical display.
+
+For the Socket.IO connection lifecycle, authentication, role rooms, event payloads, and frontend refresh behavior, see the [Socket.IO and Real-Time Notifications Guide](../SOCKET-IO-REALTIME-GUIDE.md).
 
 ### Services and schedules
+
+When an Admin saves a Staff schedule, future Pending, Confirmed, and Checked In appointments that no longer fit the staff member's working hours or assigned services are cancelled. Their reserved times and active queue entries are released, and customers are emailed the new weekly schedule with a red rescheduling button. The response includes cancellation and email-failure counts; configure SMTP for delivery.
 
 | Method | Route | Access |
 | --- | --- | --- |
@@ -157,7 +180,9 @@ Appointment statuses are `Pending`, `Confirmed`, `Checked In`, `In Service`, `Co
 | `PATCH` | `/queue/:id/complete` | Assigned Staff or Admin |
 | `GET` | `/dashboard/stats?from=YYYY-MM-DD&to=YYYY-MM-DD` | Admin |
 
-Check-in numbers increase atomically per local business date. Socket.IO broadcasts persisted appointment and queue changes to authenticated clients; the frontend refreshes active queue, appointment, dashboard, and slot availability views when updates arrive. See [socket-io-guide.md](../docs/socket-io-guide.md) for the event contract and test command. The no-show job runs using `NO_SHOW_CRON` and marks only still-Confirmed appointments after `CHECK_IN_GRACE_MINUTES`.
+Check-in is allowed only on the appointment's scheduled local date, and queue numbers increase atomically per local business date. Socket.IO broadcasts persisted appointment and queue changes to authenticated clients; the frontend refreshes active queue, appointment, dashboard, and slot availability views when updates arrive. New bookings also emit `appointment:booked` with the customer's name to Receptionist sockets only, triggering a dismissible confirmation toast. See the [Socket.IO and Real-Time Notifications Guide](../SOCKET-IO-REALTIME-GUIDE.md) for event contracts and setup. The no-show job runs using `NO_SHOW_CRON` and marks only still-Confirmed appointments after `CHECK_IN_GRACE_MINUTES`.
+
+Run the backend unit/socket tests with `npm test`. MongoDB-backed API integration tests use a uniquely named database and remove it after completion; set `TEST_MONGODB_URI` to a test MongoDB server before running `npm run test:roles`, `npm run test:appointment-concurrency`, or `npm run test:overlap-services`.
 
 ## Booking safety and time zone
 

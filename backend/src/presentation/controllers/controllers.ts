@@ -43,7 +43,7 @@ export function createControllers(
   const catalog = new CatalogService();
   const dashboard = new DashboardService();
   const queue = new QueueService(updatePublisher);
-  const staff = new StaffService();
+  const staff = new StaffService(updatePublisher);
 
   return {
     register: async (req, res) => respond(res, await auth.registerCustomer(req.body), 201),
@@ -51,6 +51,10 @@ export function createControllers(
     me: async (req, res) => respond(res, await auth.getCurrentUser(authenticatedUser(req).id)),
     logout: (_req, res) => respond(res, { message: "Logged out. Remove the bearer token from the client." }),
     listStaff: async (req, res) => respond(res, await staff.listStaff(queryString(req, "serviceId"))),
+    listEmployees: async (_req, res) => respond(res, await staff.listEmployees()),
+    setEmployeeStatus: async (req, res) =>
+      respond(res, await staff.setEmployeeActive(routeParam(req, "id"), req.body?.active)),
+    deleteStaff: async (req, res) => respond(res, await staff.deleteStaff(routeParam(req, "id"))),
     createStaff: async (req, res) => respond(res, await auth.createStaff(req.body), 201),
     createReceptionist: async (req, res) => respond(res, await auth.createReceptionist(req.body), 201),
     listServices: async (req, res) =>

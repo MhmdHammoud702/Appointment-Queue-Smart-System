@@ -3,3 +3,22 @@
 .service-actions { display: flex; gap: 5px; }
 .checkbox-label { display: flex; align-items: center; gap: 7px; color: #718094; font-size: 12px; }
 .checkbox-label input { accent-color: #0c9995; }
+
+@media (max-width: 600px) {
+  .services-toolbar { align-items: flex-start; flex-wrap: wrap; }
+  .services-table-panel { padding-right: 10px; padding-left: 10px; }
+  .service-actions { flex-wrap: wrap; }
+}
+
+@media (min-width: 1920px) {
+  .services-toolbar { gap: 18px; margin-bottom: 20px; }
+  .services-table-panel { padding: 8px 20px; }
+  .service-actions { gap: 8px; }
+  .checkbox-label { font-size: 14px; }
+}
+
+@media (min-width: 3600px) {
+  .services-table-panel { padding: 12px 26px; }
+  .service-actions { gap: 12px; }
+  .checkbox-label { font-size: 16px; }
+}

@@ -10,3 +10,26 @@
   .modal-card { padding: 17px; }
   .modal-body { max-height: 70vh; }
 }
+
+@media (min-width: 1920px) {
+  .modal-card { width: min(100%, 520px); padding: 28px; }
+  .modal-card h2 { font-size: 19px; }
+  .modal-body { font-size: 15px; }
+  .modal-actions { gap: 10px; margin-top: 24px; }
+}
+
+@media (min-width: 2560px) {
+  .modal-card { width: min(100%, 620px); padding: 34px; }
+  .modal-card h2 { font-size: 22px; }
+  .modal-body { font-size: 17px; }
+}
+
+@media (max-height: 700px) {
+  .modal-backdrop { align-items: start; }
+  .modal-card { margin: auto 0; }
+  .modal-body { max-height: 55vh; }
+}
+
+@media (min-width: 2560px) {
+  .modal-backdrop { padding: 32px; }
+}

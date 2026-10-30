@@ -1,4 +1,16 @@
 .ap-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 26px 12px; color: #5e6e82; text-align: center; }
-.ap-empty strong { color: #35465b; font-size: 13px; }
-.ap-empty p { max-width: 320px; margin: 0; color: #8491a0; font-size: 12px; }
+.ap-empty strong { color: #35465b; font-size: clamp(13px, calc(12px + .1vw), 15px); }
+.ap-empty p { max-width: 420px; margin: 0; color: #8491a0; font-size: clamp(12px, calc(11px + .1vw), 14px); }
 .empty-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px; background: #eaf6f5; color: #098d89; }
+
+@media (min-width: 1920px) {
+  .ap-empty { gap: 11px; padding: 34px 16px; }
+  .empty-icon { width: 42px; height: 42px; }
+}
+
+@media (min-width: 3600px) {
+  .ap-empty { gap: 14px; padding: 44px 20px; }
+  .ap-empty strong { font-size: 17px; }
+  .ap-empty p { font-size: 16px; }
+  .empty-icon { width: 50px; height: 50px; }
+}

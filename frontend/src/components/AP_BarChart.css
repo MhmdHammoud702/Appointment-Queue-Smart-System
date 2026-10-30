@@ -4,3 +4,17 @@
 .chart-bar { width: min(28px, 70%); min-height: 4px; border-radius: 3px 3px 0 0; background: #a9dcd8; transition: background .15s; }
 .chart-bar:hover { background: #62c2bb; }
 .chart-bar.today { background: #0e9c98; }
+
+@media (min-width: 1920px) {
+  .chart { height: 190px; gap: 18px; padding: 14px 12px 0; background-size: auto 45px; }
+  .chart-column { gap: 8px; font-size: 13px; }
+  .chart-bar-track { height: 158px; }
+  .chart-bar { width: min(36px, 70%); }
+}
+
+@media (min-width: 3600px) {
+  .chart { height: 240px; gap: 24px; padding: 18px 16px 0; background-size: auto 56px; }
+  .chart-column { font-size: 15px; }
+  .chart-bar-track { height: 202px; }
+  .chart-bar { width: min(44px, 70%); }
+}

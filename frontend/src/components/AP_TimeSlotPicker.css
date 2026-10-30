@@ -14,3 +14,21 @@
 @media (max-width: 650px) {
   .time-slot-picker { padding: 14px 0 0; border-top: 1px solid #edf0f3; border-left: 0; }
 }
+
+@media (min-width: 1920px) {
+  .time-slot-picker { padding-left: 22px; }
+  .time-slot-heading h3 { font-size: 14px; }
+  .time-slot-heading span, .time-slot-hint { font-size: 13px; }
+  .time-slot-group h4 { font-size: 12px; }
+  .time-slot-options { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px; }
+  .time-slot-option { min-height: 38px; font-size: 13px; }
+}
+
+@media (min-width: 3600px) {
+  .time-slot-picker { padding-left: 28px; }
+  .time-slot-heading h3 { font-size: 16px; }
+  .time-slot-heading span, .time-slot-hint { font-size: 15px; }
+  .time-slot-group h4 { font-size: 14px; }
+  .time-slot-options { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 10px; }
+  .time-slot-option { min-height: 44px; font-size: 15px; }
+}

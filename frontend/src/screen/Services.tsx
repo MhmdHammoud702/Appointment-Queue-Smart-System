@@ -169,7 +169,7 @@ export function Services() {
         </label>
       </div>
       {requestError && <AP_Error message={requestError} onRetry={() => setRequestError("")} />}
-      {successMessage && <AP_Success message={successMessage} />}
+      {successMessage && <AP_Success message={successMessage} onDismiss={() => setSuccessMessage("")} />}
       <section className="panel services-table-panel">
         <AP_Table
           columns={[

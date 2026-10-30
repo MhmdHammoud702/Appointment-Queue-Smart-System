@@ -21,6 +21,9 @@ export function createApiRoutes(
   router.get("/users/staff", authenticate, controller.listStaff);
   router.post("/users/staff", authenticate, authorize("Admin"), controller.createStaff);
   router.post("/users/receptionists", authenticate, authorize("Admin"), controller.createReceptionist);
+  router.get("/users/employees", authenticate, authorize("Admin"), controller.listEmployees);
+  router.patch("/users/employees/:id/status", authenticate, authorize("Admin"), controller.setEmployeeStatus);
+  router.delete("/users/staff/:id", authenticate, authorize("Admin"), controller.deleteStaff);
 
   router.get("/services", optionalAuthenticate, controller.listServices);
   router.post("/services", authenticate, authorize("Admin"), controller.createService);

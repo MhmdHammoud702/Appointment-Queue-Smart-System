@@ -49,7 +49,7 @@ export class AuthService {
 
   async login({ email, password }: LoginInput) {
     const user = await User.findOne({ email: email.toLowerCase() }).select("+passwordHash");
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+    if (!user || !user.isActive || !(await bcrypt.compare(password, user.passwordHash))) {
       throw new DomainError("Email or password is incorrect.", 401, "INVALID_CREDENTIALS");
     }
     return { user: publicUser(user), token: createToken(user) };
@@ -57,7 +57,7 @@ export class AuthService {
 
   async getCurrentUser(userId: string) {
     const user = await User.findById(userId);
-    if (!user) throw new DomainError("User not found.", 404, "USER_NOT_FOUND");
+    if (!user || !user.isActive) throw new DomainError("User account is unavailable.", 401, "ACCOUNT_DEACTIVATED");
     return publicUser(user);
   }
 

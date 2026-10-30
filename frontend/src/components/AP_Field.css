@@ -1,9 +1,19 @@
 .ap-field { min-width: 0; margin-bottom: 15px; }
-.ap-field .form-field { display: block; margin: 0; color: #47576b; font-size: 12px; font-weight: 600; }
-.ap-input { display: block; width: 100%; height: 37px; margin-top: 7px; padding: 0 10px; border: 1px solid #dfe5eb; border-radius: 5px; outline: none; background: #fff; color: #34465c; font-size: 13px; }
+.ap-field .form-field { display: block; margin: 0; color: #47576b; font-size: clamp(12px, calc(11px + .12vw), 14px); font-weight: 600; }
+.ap-input { display: block; width: 100%; height: 37px; margin-top: 7px; padding: 0 10px; border: 1px solid #dfe5eb; border-radius: 5px; outline: none; background: #fff; color: #34465c; font-size: clamp(13px, calc(12px + .12vw), 15px); }
 .ap-input:focus { border-color: #69bdb8; box-shadow: 0 0 0 2px #e6f5f3; }
 .ap-input[aria-invalid="true"] { border-color: #d75650; }
 .ap-input:disabled { background: #f1f3f5; color: #8995a4; }
 .field-error, .field-help { display: block; margin-top: 5px; font-size: 11px; font-weight: 400; }
 .field-error { color: #c2514e; }
 .field-help { color: #8995a4; }
+
+@media (min-width: 1920px) {
+  .ap-field { margin-bottom: 18px; }
+  .ap-input { height: 42px; padding-right: 13px; padding-left: 13px; }
+}
+
+@media (min-width: 2560px) {
+  .ap-field { margin-bottom: 21px; }
+  .ap-input { height: 48px; padding-right: 16px; padding-left: 16px; }
+}

@@ -1,8 +1,11 @@
 import axios from "axios";
 import type {
   ApiAppointment,
+  ApiEmployee,
+  ApiEmployeeStatusUpdate,
   ApiQueueEntry,
   ApiSchedule,
+  ApiScheduleSaveResult,
   ApiService,
   ApiStaff,
   ApiUser,
@@ -62,17 +65,23 @@ export const servicesApi = {
 export const staffApi = {
   list: (serviceId?: string) =>
     request<ApiStaff[]>(api.get("/users/staff", { params: serviceId ? { serviceId } : {} })),
+  listEmployees: () => request<ApiEmployee[]>(api.get("/users/employees")),
+  setEmployeeActive: (id: string, active: boolean) =>
+    request<ApiEmployeeStatusUpdate>(api.patch(`/users/employees/${id}/status`, { active })),
+  deleteStaff: (id: string) =>
+    request<{ id: string; fullName: string; preservedAppointments: number }>(api.delete(`/users/staff/${id}`)),
   create: (fields: RegisterFields) => request<ApiUser>(api.post("/users/staff", fields)),
   createReceptionist: (fields: RegisterFields) =>
     request<ApiUser>(api.post("/users/receptionists", fields)),
   getSchedule: (id: string) => request<ApiSchedule>(api.get(`/staff/${id}/schedule`)),
   saveSchedule: (id: string, fields: ScheduleFields) =>
-    request<ApiSchedule>(api.put(`/staff/${id}/schedule`, fields)),
+    request<ApiScheduleSaveResult>(api.put(`/staff/${id}/schedule`, fields)),
 };
 
 export const appointmentsApi = {
   list: (filters: AppointmentFilters = {}) =>
     request<ApiAppointment[]>(api.get("/appointments", { params: filters })),
+  get: (id: string) => request<ApiAppointment>(api.get(`/appointments/${id}`)),
   availability: (serviceId: string, staffId: string, date: string, signal?: AbortSignal) =>
     request<{ time: string; start: string; end: string; available: boolean }[]>(
       api.get("/appointments/availability", { params: { serviceId, staffId, date }, signal }),

@@ -1,6 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
+import { createPortal } from "react-dom";
 import { AP_Button } from "../components/AP_Button";
 import { AP_Error } from "../components/AP_Error";
+import { AP_Modal } from "../components/AP_Modal";
 import { AP_PageHeader } from "../components/AP_PageHeader";
 import { AP_StatusPill } from "../components/AP_StatusPill";
 import { AP_Table } from "../components/AP_Table";
@@ -25,6 +35,13 @@ const filters: ("All" | AppointmentStatus)[] = [
   "Cancelled",
   "No-show",
 ];
+
+type ActionMenuPosition = {
+  appointmentId: string;
+  anchor: HTMLButtonElement;
+  top: number;
+  left: number;
+};
 
 function localDateTimeToIso(date: string, time: string): string {
   const [year, month, day] = date.split("-").map(Number);
@@ -65,7 +82,10 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
   const [requestError, setRequestError] = useState("");
   const [actionError, setActionError] = useState("");
   const [workingId, setWorkingId] = useState("");
-  const [openActionId, setOpenActionId] = useState("");
+  const [actionMenu, setActionMenu] = useState<ActionMenuPosition | null>(null);
+  const [positionedMenuId, setPositionedMenuId] = useState("");
+  const actionMenuRef = useRef<HTMLDivElement>(null);
+  const [appointmentToCancel, setAppointmentToCancel] = useState<AppointmentView | null>(null);
 
   const loadAppointments = useCallback(async () => {
     setLoading(true);
@@ -91,6 +111,71 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
     window.addEventListener("queue-updated", onQueueUpdate);
     return () => window.removeEventListener("queue-updated", onQueueUpdate);
   }, [loadAppointments]);
+
+  useEffect(() => {
+    if (!actionMenu) return;
+
+    function closeFromOutside(event: MouseEvent) {
+      const target = event.target;
+      if (
+        target instanceof Element &&
+        !target.closest(".appointment-row-menu-items") &&
+        !target.closest(".appointment-row-menu")
+      ) {
+        setActionMenu(null);
+      }
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setActionMenu(null);
+    }
+
+    document.addEventListener("click", closeFromOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("click", closeFromOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [actionMenu]);
+
+  useLayoutEffect(() => {
+    if (!actionMenu) return;
+    const currentMenu = actionMenu;
+
+    function positionMenu() {
+      const anchor = currentMenu.anchor;
+      const menu = actionMenuRef.current;
+      if (!anchor.isConnected || !menu) return;
+
+      const anchorBounds = anchor.getBoundingClientRect();
+      const menuBounds = menu.getBoundingClientRect();
+      const left = Math.max(8, Math.min(anchorBounds.left, window.innerWidth - menuBounds.width - 8));
+      const below = anchorBounds.bottom + 5;
+      const top = below + menuBounds.height <= window.innerHeight - 8
+        ? below
+        : Math.max(8, anchorBounds.top - menuBounds.height - 5);
+
+      setActionMenu((current) => {
+        if (
+          !current ||
+          current.appointmentId !== currentMenu.appointmentId ||
+          (current.top === top && current.left === left)
+        ) {
+          return current;
+        }
+        return { ...current, top, left };
+      });
+      setPositionedMenuId(currentMenu.appointmentId);
+    }
+
+    positionMenu();
+    window.addEventListener("resize", positionMenu);
+    window.addEventListener("scroll", positionMenu, true);
+    return () => {
+      window.removeEventListener("resize", positionMenu);
+      window.removeEventListener("scroll", positionMenu, true);
+    };
+  }, [actionMenu]);
 
   const loadStaff = useCallback(async () => {
     if (role === "Customer") return;
@@ -118,16 +203,20 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
   const canCheckIn = role === "Admin" || role === "Receptionist";
   const canCancel = role === "Admin" || role === "Staff";
   const canReschedule = role === "Admin" || role === "Staff";
+  const actionMenuAppointment = actionMenu
+    ? visibleAppointments.find((appointment) => appointment.id === actionMenu.appointmentId) ?? null
+    : null;
 
   async function updateAppointment(id: string, action: "confirm" | "cancel" | "check-in") {
     setWorkingId(id);
     setActionError("");
-    setOpenActionId("");
+    setActionMenu(null);
     try {
       if (action === "confirm") {
         await appointmentsApi.confirm(id);
       } else if (action === "cancel") {
         await appointmentsApi.cancel(id);
+        setAppointmentToCancel(null);
       } else {
         const appointment = items.find((item) => item.id === id);
         if (!appointment) return;
@@ -144,6 +233,23 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
   const staffOptions = [
     ...staffNames.map((name) => ({ value: name, label: name })),
   ];
+
+  function toggleActionMenu(event: ReactMouseEvent<HTMLButtonElement>, appointmentId: string) {
+    if (actionMenu?.appointmentId === appointmentId) {
+      setActionMenu(null);
+      setPositionedMenuId("");
+      return;
+    }
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    setPositionedMenuId("");
+    setActionMenu({
+      appointmentId,
+      anchor: event.currentTarget,
+      top: bounds.bottom + 5,
+      left: bounds.left,
+    });
+  }
 
   return (
     <>
@@ -231,53 +337,13 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
                 return (
                   <div className="appointment-row-menu">
                     <AP_Button
-                      aria-expanded={openActionId === appointment.id}
+                      aria-expanded={actionMenu?.appointmentId === appointment.id}
                       aria-label={`Actions for ${appointment.reference}`}
                       disabled={workingId === appointment.id}
-                      onClick={() => setOpenActionId(openActionId === appointment.id ? "" : appointment.id)}
+                      onClick={(event) => toggleActionMenu(event, appointment.id)}
                       size="small"
                       variant="secondary"
                     >···</AP_Button>
-                    {openActionId === appointment.id && (
-                      <div className="appointment-row-menu-items">
-                        <small>{appointment.status} booking</small>
-                        {canCheckIn && appointment.status === "Confirmed" && (
-                          <button onClick={() => void updateAppointment(appointment.id, "check-in")} type="button">
-                            Check in <span>adds to queue</span>
-                          </button>
-                        )}
-                        {canConfirm && appointment.status === "Pending" && (
-                          <button onClick={() => void updateAppointment(appointment.id, "confirm")} type="button">
-                            Confirm
-                          </button>
-                        )}
-                        {canRescheduleAppointment && (
-                          <button
-                            onClick={() => {
-                              setOpenActionId("");
-                              const record = records.find((item) => item._id === appointment.id);
-                              if (record) onReschedule(record);
-                            }}
-                            type="button"
-                          >
-                            Reschedule
-                          </button>
-                        )}
-                        {canCancelAppointment && (
-                          <button
-                            className="cancel-action"
-                            onClick={() => {
-                              if (window.confirm(`Cancel appointment ${appointment.reference}?`)) {
-                                void updateAppointment(appointment.id, "cancel");
-                              }
-                            }}
-                            type="button"
-                          >
-                            Cancel appointment
-                          </button>
-                        )}
-                      </div>
-                    )}
                   </div>
                 );
               },
@@ -293,6 +359,91 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
           onEmptyAction={() => { setSearch(""); setSelectedStaff(""); setFilter("All"); }}
         />
       </section>
+      {actionMenu && actionMenuAppointment && createPortal(
+        <div
+          ref={actionMenuRef}
+          className="appointment-row-menu-items"
+          role="menu"
+          style={{
+            position: "fixed",
+            top: actionMenu.top,
+            left: actionMenu.left,
+            visibility: positionedMenuId === actionMenu.appointmentId ? "visible" : "hidden",
+          }}
+        >
+          <small>{actionMenuAppointment.status} booking</small>
+          {canCheckIn && actionMenuAppointment.status === "Confirmed" && (
+            <button onClick={() => void updateAppointment(actionMenuAppointment.id, "check-in")} role="menuitem" type="button">
+              Check in <span>adds to queue</span>
+            </button>
+          )}
+          {canConfirm && actionMenuAppointment.status === "Pending" && (
+            <button onClick={() => void updateAppointment(actionMenuAppointment.id, "confirm")} role="menuitem" type="button">
+              Confirm
+            </button>
+          )}
+          {canReschedule && ["Pending", "Confirmed"].includes(actionMenuAppointment.status) && (
+            <button
+              onClick={() => {
+                setActionMenu(null);
+                const record = records.find((item) => item._id === actionMenuAppointment.id);
+                if (record) onReschedule(record);
+              }}
+              role="menuitem"
+              type="button"
+            >
+              Reschedule
+            </button>
+          )}
+          {canCancel && ["Pending", "Confirmed"].includes(actionMenuAppointment.status) && (
+            <button
+              className="cancel-action"
+              onClick={() => {
+                setActionError("");
+                setActionMenu(null);
+                setAppointmentToCancel(actionMenuAppointment);
+              }}
+              role="menuitem"
+              type="button"
+            >
+              Cancel appointment
+            </button>
+          )}
+        </div>,
+        document.body
+      )}
+      <AP_Modal
+        open={Boolean(appointmentToCancel)}
+        title="Cancel this appointment?"
+        body={
+          <>
+            <p>Cancel appointment {appointmentToCancel?.reference}? This action cannot be undone.</p>
+            {actionError && <AP_Error message={actionError} />}
+          </>
+        }
+        onClose={() => {
+          if (!workingId) setAppointmentToCancel(null);
+        }}
+        actions={
+          <>
+            <AP_Button
+              disabled={Boolean(workingId)}
+              onClick={() => setAppointmentToCancel(null)}
+              variant="secondary"
+            >
+              Keep appointment
+            </AP_Button>
+            <AP_Button
+              disabled={!appointmentToCancel || workingId === appointmentToCancel.id}
+              loading={Boolean(appointmentToCancel && workingId === appointmentToCancel.id)}
+              onClick={() => appointmentToCancel && void updateAppointment(appointmentToCancel.id, "cancel")}
+              variant="danger"
+            >
+              Confirm cancellation
+            </AP_Button>
+          </>
+        }
+      />
     </>
   );
 }

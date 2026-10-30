@@ -1,26 +1,43 @@
-.app-shell { display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
+.app-shell { width: 100%; max-width: none; display: flex; height: 100vh; height: 100dvh; margin: 0; overflow: hidden; background: #f5f7fa; }
 .session-loading { min-height: 100vh; display: grid; place-items: center; color: #78869a; font-size: 14px; }
-.main-area { min-width: 0; min-height: 0; height: 100%; flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+.main-area { min-width: 0; min-height: 0; height: 100%; flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #f5f7fa; }
 
 .topbar {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  width: 100%;
   height: 64px;
   flex: 0 0 64px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0 34px;
+  padding: 0 24px;
   background: #fff;
   border-bottom: 1px solid #edf0f3;
 }
 
+.topbar-inner { width: 100%; max-width: var(--content-max); height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 auto; }
 .topbar-right { display: flex; align-items: center; gap: 22px; }
+.topbar-brand, .topbar-menu-button, .mobile-business-name, .mobile-online-status { display: none; }
 .topbar-date { color: #7d8999; font-size: 13px; }
 .profile-button { display: flex; align-items: center; gap: 9px; padding: 0; border: 0; background: none; text-align: left; }
+.live-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid #dcefe8; border-radius: 20px; background: #f0faf5; color: #237b57; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.live-badge-connecting { border-color: #f2e7c9; background: #fffaf0; color: #987321; }
+.live-badge-offline { border-color: #e6e9ed; background: #f6f7f8; color: #707b88; }
+.live-badge .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #27ae8c; box-shadow: 0 0 0 3px #e4f6f0; }
+.live-badge-connecting .live-dot { background: #d3a232; box-shadow: 0 0 0 3px #fbf0d7; }
+.live-badge-offline .live-dot { background: #8d98a5; box-shadow: 0 0 0 3px #e9ecef; }
 .profile-chevron { color: #8390a0; font-size: 16px; }
 .profile-button strong { display: block; font-size: 13px; font-weight: 600; }
 .profile-button small { display: block; margin-top: 3px; color: #99a8ba; font-size: 12px; }
 .demo-label { display: flex; align-items: center; gap: 7px; color: #77869a; font-size: 12px; }
 .live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #27ae8c; box-shadow: 0 0 0 3px #e4f6f0; }
+.appointment-booked-toast { position: fixed; z-index: 40; top: 8px; left: 50%; width: min(520px, calc(100vw - 32px)); display: flex; align-items: center; gap: 12px; padding: 14px 15px; transform: translateX(-50%); border: 1px solid #e8d7b6; border-radius: 12px; background: #fbf2df; box-shadow: 0 12px 32px rgba(70, 55, 30, .18); color: #5b492d; animation: appointment-toast-enter .24s ease-out; }
+.appointment-booked-toast-icon { width: 28px; height: 28px; display: grid; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #ead9b6; color: #70572e; font-size: 16px; font-weight: 800; }
+.appointment-booked-toast-message { flex: 1; font-size: 13px; line-height: 1.5; }
+.appointment-booked-toast-message strong { color: #44351f; }
+.appointment-booked-toast-dismiss { width: 28px; height: 28px; display: grid; flex: 0 0 auto; place-items: center; border: 0; border-radius: 6px; background: transparent; color: #796746; cursor: pointer; font-size: 21px; line-height: 1; }
+.appointment-booked-toast-dismiss:hover { background: rgba(112, 87, 46, .1); }
+.appointment-booked-toast-dismiss:focus-visible { outline: 2px solid #9a7a43; outline-offset: 2px; }
+@keyframes appointment-toast-enter { from { opacity: 0; translate: 0 -8px; } to { opacity: 1; translate: 0 0; } }
 .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 11px; }
 .panel-heading h2 { margin: 0 0 4px; color: #24354a; font-size: 13px; font-weight: 700; }
 .panel-heading p { margin: 0; color: #8a96a4; font-size: 12px; }
@@ -32,22 +49,66 @@
 .avatar { width: 25px; height: 25px; display: inline-grid; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #e5f3f2; color: #138883; font-size: 11px; font-weight: 700; }
 .avatar-purple { width: 29px; height: 29px; background: #eee8ff; color: #7553bc; }
 
-.page-content { width: 100%; max-width: 1500px; flex: 1; margin: 0 auto; padding: 31px 34px 40px; }
-.app-footer { display: flex; justify-content: space-between; padding: 13px 34px 17px; border-top: 1px solid #e8edf1; color: #95a0ad; font-size: 11px; }
+.page-content { width: 100%; max-width: var(--content-max); flex: 1; margin: 0 auto; padding: clamp(22px, 2.1vw, 34px) var(--page-gutter) 40px; }
+.app-footer { width: 100%; max-width: var(--content-max); display: flex; justify-content: space-between; margin: 0 auto; padding: 13px var(--page-gutter) 17px; border-top: 1px solid #e8edf1; color: #95a0ad; font-size: 11px; }
 
 @media (max-width: 760px) {
   .app-shell { flex-direction: column; }
-  .topbar { height: 56px; flex-basis: 56px; padding: 0 15px; }
-  .topbar-date, .profile-button > span:not(.avatar) { display: none; }
-  .topbar-right { gap: 16px; }
+  .topbar { display: block; height: 56px; flex-basis: 56px; padding: 0 15px; border-bottom-color: #263b55; background: var(--navy); color: #fff; }
+  .topbar-inner { gap: 10px; }
+  .appointment-booked-toast { top: 6px; }
+  .topbar > .topbar-inner > .live-badge,
+  .topbar-date,
+  .profile-button { display: none; }
+  .mobile-business-name { display: block; color: #fff; font-family: "Manrope", sans-serif; font-size: 15px; font-weight: 800; white-space: nowrap; }
+  .topbar-right { gap: 12px; margin-left: auto; }
+  .mobile-online-status { display: inline-flex; align-items: center; gap: 7px; color: #d7e1ee; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .mobile-online-status .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #27ae8c; box-shadow: 0 0 0 3px rgba(39, 174, 140, .16); }
+  .mobile-online-status-connecting .live-dot { background: #d3a232; box-shadow: 0 0 0 3px rgba(211, 162, 50, .16); }
+  .mobile-online-status-offline .live-dot { background: #8d98a5; box-shadow: 0 0 0 3px rgba(141, 152, 165, .16); }
+  .topbar-menu-button { width: 38px; height: 38px; display: flex; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border: 0; border-radius: 7px; background: transparent; color: #fff; cursor: pointer; }
+  .topbar-menu-button:hover { background: rgba(255, 255, 255, .08); }
+  .topbar-menu-button:focus-visible { outline: 2px solid #54d0c4; outline-offset: 2px; }
+  .topbar-menu-button > span { width: 18px; height: 2px; border-radius: 2px; background: currentColor; }
+  .main-area { transition: filter .24s ease; }
+  .app-shell.mobile-menu-open .main-area { filter: blur(4px); }
   .page-content { min-height: 0; padding: 20px 15px 24px; }
   .app-footer { gap: 10px; padding: 12px 15px; font-size: 10px; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .appointment-booked-toast { animation: none; }
+}
+
+@media (min-width: 761px) and (max-width: 1000px) {
+  .topbar { padding-right: 18px; padding-left: 18px; }
+  .topbar-date { display: none; }
+  .topbar-right { gap: 14px; }
+}
+
+@media (min-width: 1920px) {
+  .topbar { height: 72px; flex-basis: 72px; padding-right: 36px; padding-left: 36px; }
+  .topbar-date { font-size: 14px; }
+  .topbar-right { gap: 28px; }
+  .topbar-inner { gap: 24px; }
+  .page-content { padding-top: 40px; padding-bottom: 48px; }
+  .app-footer { padding-top: 17px; padding-bottom: 20px; font-size: 12px; }
+  .panel-heading h2 { font-size: 15px; }
+  .panel-heading p { font-size: 14px; }
+}
+
+@media (min-width: 2560px) {
+  .topbar { height: 80px; flex-basis: 80px; padding-right: 48px; padding-left: 48px; }
+  .topbar-date { font-size: 15px; }
+  .topbar-right { gap: 32px; }
+  .page-content { padding-top: 48px; padding-bottom: 56px; }
+  .panel-heading h2 { font-size: 17px; }
+  .panel-heading p { font-size: 15px; }
+}
+
 @media (max-width: 460px) {
   .main-area { width: 100%; }
-  .topbar { display: none; }
-  .profile-button { display: none; }
+  .topbar { height: 50px; flex-basis: 50px; padding: 0 12px; }
   .page-content { padding: 15px 12px 22px; }
   .app-footer { display: none; }
 }

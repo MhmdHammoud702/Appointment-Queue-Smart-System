@@ -4,3 +4,12 @@
 .toolbar-field .form-field { font-size: 0; }
 .toolbar-field .ap-input { height: 32px; margin-top: 0; font-size: 12px; }
 .toolbar-field .field-error, .toolbar-field .field-help { display: none; }
+
+@media (max-width: 600px) {
+  .toolbar-field { width: min(100%, 240px); }
+}
+
+@media (min-width: 1920px) {
+  .toolbar-field { width: min(320px, 24vw); }
+  .toolbar-field .ap-input { height: 38px; font-size: 14px; }
+}

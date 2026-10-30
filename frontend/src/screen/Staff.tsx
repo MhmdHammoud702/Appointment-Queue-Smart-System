@@ -10,13 +10,14 @@ import { AP_Select } from "../components/AP_Select";
 import { AP_Success } from "../components/AP_Success";
 import { AP_Textbox } from "../components/AP_Textbox";
 import { getErrorMessage, servicesApi, staffApi } from "../shared/api";
-import type { ApiSchedule, ApiService, ApiStaff, EmployeeRole, RegisterFields, ScheduleFields } from "../shared/types";
+import type { ApiEmployee, ApiSchedule, ApiService, ApiStaff, EmployeeRole, RegisterFields, ScheduleFields } from "../shared/types";
 import { getRecordId } from "../shared/types";
 import { registerSchema } from "../shared/validation";
 import "./Staff.css";
 
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const emptyStaffForm: RegisterFields = { fullName: "", email: "", phone: "", password: "" };
+const employeePageSize = 9;
 
 function getScheduleFields(schedule: ApiSchedule): ScheduleFields {
   return {
@@ -27,9 +28,13 @@ function getScheduleFields(schedule: ApiSchedule): ScheduleFields {
 }
 
 export function Staff() {
-  const [staff, setStaff] = useState<ApiStaff[]>([]);
+  const [employees, setEmployees] = useState<ApiEmployee[]>([]);
+  const [search, setSearch] = useState("");
+  const [employeePage, setEmployeePage] = useState(1);
   const [services, setServices] = useState<ApiService[]>([]);
   const [selectedStaff, setSelectedStaff] = useState<ApiStaff | null>(null);
+  const [statusChange, setStatusChange] = useState<{ employee: ApiEmployee; active: boolean } | null>(null);
+  const [staffToDelete, setStaffToDelete] = useState<ApiEmployee | null>(null);
   const [schedule, setSchedule] = useState<ScheduleFields>({ weeklyIntervals: [], daysOff: [], services: [] });
   const [scheduleLoading, setScheduleLoading] = useState(false);
   const [scheduleSaving, setScheduleSaving] = useState(false);
@@ -38,6 +43,8 @@ export function Staff() {
   const [staffForm, setStaffForm] = useState(emptyStaffForm);
   const [employeeRole, setEmployeeRole] = useState<EmployeeRole>("Staff");
   const [accountSaving, setAccountSaving] = useState(false);
+  const [statusSaving, setStatusSaving] = useState(false);
+  const [deleteSaving, setDeleteSaving] = useState(false);
   const [staffErrors, setStaffErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [requestError, setRequestError] = useState("");
@@ -47,8 +54,8 @@ export function Staff() {
     setLoading(true);
     setRequestError("");
     try {
-      const [staffResult, serviceResult] = await Promise.all([staffApi.list(), servicesApi.list()]);
-      setStaff(staffResult);
+      const [employeeResult, serviceResult] = await Promise.all([staffApi.listEmployees(), servicesApi.list()]);
+      setEmployees(employeeResult);
       setServices(serviceResult);
     } catch (error) {
       setRequestError(getErrorMessage(error));
@@ -116,14 +123,69 @@ export function Staff() {
 
     setScheduleSaving(true);
     setScheduleError("");
+    setRequestError("");
     try {
-      await staffApi.saveSchedule(getRecordId(selectedStaff), schedule);
-      setSuccessMessage(`Schedule saved for ${selectedStaff.fullName}.`);
+      const result = await staffApi.saveSchedule(getRecordId(selectedStaff), schedule);
+      const cancellationMessage = result.cancelledAppointments > 0
+        ? ` ${result.cancelledAppointments} future appointment${result.cancelledAppointments === 1 ? "" : "s"} cancelled.`
+        : "";
+      setSuccessMessage(`Schedule saved for ${selectedStaff.fullName}.${cancellationMessage}`);
+      if (result.failedNotifications > 0) {
+        setRequestError(
+          `Could not email ${result.failedNotifications} affected customer${result.failedNotifications === 1 ? "" : "s"}. Check the email server settings and contact them manually.`
+        );
+      }
       setSelectedStaff(null);
     } catch (error) {
       setScheduleError(getErrorMessage(error));
     } finally {
       setScheduleSaving(false);
+    }
+  }
+
+  async function changeEmployeeStatus() {
+    if (!statusChange) return;
+
+    setStatusSaving(true);
+    setRequestError("");
+    try {
+      const result = await staffApi.setEmployeeActive(getRecordId(statusChange.employee), statusChange.active);
+      setStatusChange(null);
+      await loadStaff();
+      const appointmentMessage = result.cancelledAppointments > 0
+        ? ` ${result.cancelledAppointments} future appointment${result.cancelledAppointments === 1 ? "" : "s"} cancelled.`
+        : "";
+      setSuccessMessage(
+        `${statusChange.employee.fullName} ${statusChange.active ? "reactivated" : "deactivated"}.${appointmentMessage}`
+      );
+      if (result.failedNotifications > 0) {
+        setRequestError(
+          `Could not email ${result.failedNotifications} affected customer${result.failedNotifications === 1 ? "" : "s"}. Check the email server settings and contact them manually.`
+        );
+      }
+    } catch (error) {
+      setRequestError(getErrorMessage(error));
+    } finally {
+      setStatusSaving(false);
+    }
+  }
+
+  async function deleteStaff() {
+    if (!staffToDelete) return;
+
+    setDeleteSaving(true);
+    setRequestError("");
+    try {
+      const result = await staffApi.deleteStaff(getRecordId(staffToDelete));
+      setStaffToDelete(null);
+      await loadStaff();
+      setSuccessMessage(
+        `${result.fullName} was permanently deleted. ${result.preservedAppointments} appointment record${result.preservedAppointments === 1 ? "" : "s"} preserved.`
+      );
+    } catch (error) {
+      setRequestError(getErrorMessage(error));
+    } finally {
+      setDeleteSaving(false);
     }
   }
 
@@ -156,6 +218,15 @@ export function Staff() {
     setSchedule({ ...schedule, services: selected });
   }
 
+  const filteredEmployees = employees.filter((member) => {
+    const query = search.trim().toLowerCase();
+    return !query || member.fullName.toLowerCase().includes(query) || (member.email ?? "").toLowerCase().includes(query);
+  });
+  const employeePageCount = Math.max(1, Math.ceil(filteredEmployees.length / employeePageSize));
+  const currentEmployeePage = Math.min(employeePage, employeePageCount);
+  const firstEmployeeIndex = (currentEmployeePage - 1) * employeePageSize;
+  const visibleEmployees = filteredEmployees.slice(firstEmployeeIndex, firstEmployeeIndex + employeePageSize);
+
   return (
     <>
       <AP_PageHeader
@@ -164,28 +235,105 @@ export function Staff() {
         action={{ label: "Add employee", onClick: () => { setStaffFormOpen(true); setRequestError(""); setStaffErrors({}); } }}
       />
       <div className="screen-toolbar staff-toolbar">
-        <span className="demo-label"><span className="live-dot" /> Staff accounts from backend</span>
-        <span className="muted-text">{loading ? "Loading" : `${staff.length} staff members`}</span>
+        <span className="staff-toolbar-label">Team members and schedules</span>
+        <div className="staff-toolbar-controls">
+          <label className="staff-search">
+            <svg aria-hidden="true" className="staff-search-icon" focusable="false" viewBox="0 0 20 20">
+              <circle cx="8.75" cy="8.75" r="5.75" />
+              <path d="m13 13 4 4" />
+            </svg>
+            <input
+              aria-label="Search staff by name or email"
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setEmployeePage(1);
+              }}
+              placeholder="Search by name or email"
+              type="search"
+              value={search}
+            />
+          </label>
+          <span aria-live="polite" className="muted-text">
+            {loading ? "Loading" : `${filteredEmployees.length} of ${employees.length} employees`}
+          </span>
+        </div>
       </div>
       {requestError && <AP_Error message={requestError} onRetry={() => void loadStaff()} />}
-      {successMessage && <AP_Success message={successMessage} />}
+      {successMessage && <AP_Success message={successMessage} onDismiss={() => setSuccessMessage("")} />}
       {loading ? <AP_Loading label="Loading staff" /> : (
         <section className="staff-grid">
-          {staff.map((member) => {
+          {visibleEmployees.map((member) => {
             const initials = member.fullName.split(/\s+/).map((part) => part[0] ?? "").join("").slice(0, 2).toUpperCase();
             return (
-              <article className="panel staff-card" key={getRecordId(member)}>
+              <article className={`panel staff-card${member.isActive ? "" : " staff-card-inactive"}`} key={getRecordId(member)}>
                 <div className="staff-profile">
                   <span className="avatar staff-avatar">{initials}</span>
                   <div className="staff-identity"><h2>{member.fullName}</h2><p>{member.email}</p></div>
                 </div>
-                <span className="staff-role">Staff member</span>
-                <AP_Button className="full-width" onClick={() => void openSchedule(member)} variant="secondary">View and edit schedule</AP_Button>
+                <span className={`staff-role${member.role === "Receptionist" ? " staff-role-receptionist" : ""}`}>
+                  {member.role === "Staff" ? "Staff member" : "Receptionist"}
+                </span>
+                <span className={`employee-status${member.isActive ? " employee-status-active" : " employee-status-inactive"}`}>
+                  {member.isActive ? "Active" : "Deactivated"}
+                </span>
+                {member.role === "Staff" && member.isActive && (
+                  <AP_Button className="full-width" onClick={() => void openSchedule(member)} variant="secondary">View and edit schedule</AP_Button>
+                )}
+                <AP_Button
+                  className="full-width"
+                  onClick={() => setStatusChange({ employee: member, active: !member.isActive })}
+                  variant={member.isActive ? "danger" : "secondary"}
+                >
+                  {member.isActive ? "Deactivate account" : "Reactivate account"}
+                </AP_Button>
+                {member.role === "Staff" && !member.isActive && (
+                  <AP_Button
+                    className="full-width"
+                    onClick={() => setStaffToDelete(member)}
+                    variant="danger"
+                  >
+                    Delete staff permanently
+                  </AP_Button>
+                )}
               </article>
             );
           })}
-          {staff.length === 0 && <p className="staff-empty">No staff accounts found. Add a staff account to get started.</p>}
+          {filteredEmployees.length === 0 && (
+            <p className="staff-empty">
+              {employees.length === 0
+                ? "No employee accounts found. Add a staff account to get started."
+                : "No employees match your search."}
+            </p>
+          )}
         </section>
+      )}
+      {!loading && filteredEmployees.length > 0 && (
+        <nav aria-label="Employee pages" className="staff-pagination">
+          <span>
+            Showing {firstEmployeeIndex + 1}–{Math.min(firstEmployeeIndex + employeePageSize, filteredEmployees.length)} of {filteredEmployees.length}
+          </span>
+          <div className="staff-pagination-controls">
+            <AP_Button
+              aria-label="Previous employee page"
+              disabled={currentEmployeePage === 1}
+              onClick={() => setEmployeePage(currentEmployeePage - 1)}
+              size="small"
+              variant="secondary"
+            >
+              Previous
+            </AP_Button>
+            <span>Page {currentEmployeePage} of {employeePageCount}</span>
+            <AP_Button
+              aria-label="Next employee page"
+              disabled={currentEmployeePage === employeePageCount}
+              onClick={() => setEmployeePage(currentEmployeePage + 1)}
+              size="small"
+              variant="secondary"
+            >
+              Next
+            </AP_Button>
+          </div>
+        </nav>
       )}
 
       <AP_Modal
@@ -223,6 +371,51 @@ export function Staff() {
       />
 
       <AP_Modal
+        open={Boolean(staffToDelete)}
+        title="Permanently delete staff account"
+        body={
+          <p>
+            Permanently delete {staffToDelete?.fullName}'s staff account and schedule? This cannot be undone.
+            Their cancelled and past appointment records will remain, with the former staff member's name preserved.
+          </p>
+        }
+        onClose={() => setStaffToDelete(null)}
+        actions={
+          <>
+            <AP_Button onClick={() => setStaffToDelete(null)} variant="secondary">Keep account</AP_Button>
+            <AP_Button loading={deleteSaving} onClick={() => void deleteStaff()} variant="danger">
+              Delete staff permanently
+            </AP_Button>
+          </>
+        }
+      />
+
+      <AP_Modal
+        open={Boolean(statusChange)}
+        title={`${statusChange?.active ? "Reactivate" : "Deactivate"} employee account`}
+        body={
+          <p>
+            {statusChange?.active
+              ? `Reactivate ${statusChange.employee.fullName}'s account? They will be able to sign in again.`
+              : `Deactivate ${statusChange?.employee.fullName}'s account? They will be signed out and cannot sign in or be booked. Their upcoming active appointments will be cancelled and customers emailed. Past appointment history and schedules will be preserved.`}
+          </p>
+        }
+        onClose={() => setStatusChange(null)}
+        actions={
+          <>
+            <AP_Button onClick={() => setStatusChange(null)} variant="secondary">Cancel</AP_Button>
+            <AP_Button
+              loading={statusSaving}
+              onClick={() => void changeEmployeeStatus()}
+              variant={statusChange?.active ? "primary" : "danger"}
+            >
+              {statusChange?.active ? "Reactivate account" : "Deactivate account"}
+            </AP_Button>
+          </>
+        }
+      />
+
+      <AP_Modal
         open={Boolean(selectedStaff)}
         title={`Schedule · ${selectedStaff?.fullName ?? ""}`}
         className="schedule-modal"
@@ -233,7 +426,7 @@ export function Staff() {
             <div className="schedule-section-heading">
               <div>
                 <h3>Weekly availability</h3>
-                <p>Turn on the days this staff member works, then set their hours.</p>
+                <p>Turn on the days this staff member works, then set their hours. Saving cancels and emails customers with future appointments that no longer fit.</p>
               </div>
               <span>Clinic time</span>
             </div>

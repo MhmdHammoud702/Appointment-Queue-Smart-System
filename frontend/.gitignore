@@ -4,5 +4,6 @@ dist
 .env.local
 *.tsbuildinfo
 docs
-
+*.test.ts
+*.test.mjs
 

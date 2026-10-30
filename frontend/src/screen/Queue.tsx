@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
 import { AP_Button } from "../components/AP_Button";
 import { AP_Error } from "../components/AP_Error";
+import { AP_Success } from "../components/AP_Success";
 import { AP_StatusPill } from "../components/AP_StatusPill";
 import { AP_Table, type AP_TableColumn } from "../components/AP_Table";
 import { AP_Textbox } from "../components/AP_Textbox";
@@ -61,6 +62,7 @@ export function Queue({ role }: QueueProps) {
   const [actionSuccess, setActionSuccess] = useState("");
   const [workingId, setWorkingId] = useState("");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [realtimeStatus, setRealtimeStatus] = useState<"connecting" | "live" | "offline">("connecting");
 
   const loadQueue = useCallback(async () => {
     setRequestError("");
@@ -91,6 +93,16 @@ export function Queue({ role }: QueueProps) {
     window.addEventListener("queue-updated", onQueueUpdate);
     return () => window.removeEventListener("queue-updated", onQueueUpdate);
   }, [loadQueue]);
+
+  useEffect(() => {
+    function onRealtimeStatus(event: Event) {
+      const status = (event as CustomEvent<"connecting" | "live" | "offline">).detail;
+      if (status) setRealtimeStatus(status);
+    }
+
+    window.addEventListener("realtime-status", onRealtimeStatus);
+    return () => window.removeEventListener("realtime-status", onRealtimeStatus);
+  }, []);
 
   async function checkInCustomer(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -180,9 +192,20 @@ export function Queue({ role }: QueueProps) {
       label: "Action",
       render: (entry) => (
         <AP_Button
+          aria-label={inServiceEntries.length > 0
+            ? "Cannot call another customer while someone is in service"
+            : workingId
+              ? "Please wait for the current queue action to finish"
+              : `Call ${entry.number}`}
+          disabled={inServiceEntries.length > 0 || workingId !== ""}
           loading={workingId === entry.id}
           onClick={() => void updateEntry(entry.id, "call")}
           size="small"
+          title={inServiceEntries.length > 0
+            ? "Complete the customer currently in service before calling the next customer."
+            : workingId
+              ? "A queue action is already in progress."
+              : undefined}
         >Call</AP_Button>
       ),
     });
@@ -230,11 +253,17 @@ export function Queue({ role }: QueueProps) {
           </div>
         )}
         <div className="queue-toolbar-actions">
-          <span className="queue-polling-note">Live updates enabled</span>
+          <span className="queue-polling-note">
+            {realtimeStatus === "live"
+              ? "Live updates connected"
+              : realtimeStatus === "connecting"
+                ? "Connecting to live updates"
+                : "Live updates unavailable"}
+          </span>
           <AP_Button onClick={() => void loadQueue()} size="small" variant="secondary">Refresh</AP_Button>
         </div>
       </div>
-      {actionSuccess && <p className="queue-action-success queue-global-action-success" role="status">{actionSuccess}</p>}
+      {actionSuccess && <AP_Success message={actionSuccess} onDismiss={() => setActionSuccess("")} />}
       {actionError && <p className="queue-action-error queue-global-action-error" role="alert">{actionError}</p>}
       {requestError && <AP_Error message={requestError} onRetry={() => void loadQueue()} />}
 

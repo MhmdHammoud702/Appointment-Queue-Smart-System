@@ -53,7 +53,7 @@ export function BookAppointment({ rescheduleAppointment = null, onRescheduleComp
     ? {
       ...initialFields,
       service: rescheduleAppointment.service._id,
-      staff: rescheduleAppointment.staff.id ?? rescheduleAppointment.staff._id ?? "",
+      staff: rescheduleAppointment.staff?.id ?? rescheduleAppointment.staff?._id ?? "",
     }
     : initialFields);
   const [services, setServices] = useState<ApiService[]>([]);
@@ -319,7 +319,13 @@ export function BookAppointment({ rescheduleAppointment = null, onRescheduleComp
           : "Pick a time that works for you. You can reschedule later from My appointments."}
       />
       {requestError && <AP_Error message={requestError} />}
-      {bookingReference && <AP_Success message="Appointment booked. It is awaiting confirmation." reference={bookingReference} />}
+      {bookingReference && (
+        <AP_Success
+          message="Appointment booked. It is awaiting confirmation."
+          onDismiss={() => setBookingReference("")}
+          reference={bookingReference}
+        />
+      )}
 
       <nav className={`booking-steps${isRescheduling ? " reschedule-steps" : ""}`} aria-label="Booking progress">
         {(isRescheduling

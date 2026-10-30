@@ -107,7 +107,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       />
 
       <div className="screen-toolbar">
-        <span className="demo-label"><span className="live-dot" /> Connected to backend</span>
         <div className="date-range">
           <label>From <input aria-label="Dashboard start date" type="date" value={from} max={to} onChange={(event) => setFrom(event.target.value)} /></label>
           <label>To <input aria-label="Dashboard end date" type="date" value={to} min={from} onChange={(event) => setTo(event.target.value)} /></label>

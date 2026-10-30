@@ -1,18 +1,62 @@
 .appointments-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 35px; margin: 0 0 14px; }
 .appointments-empty { padding: 28px; color: #8491a0; text-align: center; font-size: 13px; }
+.my-appointments-filters { display: flex; gap: 7px; overflow-x: auto; margin: 0 0 14px; padding-bottom: 3px; }
+.my-appointment-filter { display: inline-flex; align-items: center; gap: 7px; min-height: 31px; padding: 0 10px; border: 1px solid #e2e8ee; border-radius: 5px; background: #fff; color: #788698; font-size: clamp(11px, calc(10px + .1vw), 13px); white-space: nowrap; cursor: pointer; }
+.my-appointment-filter span { color: #9ca8b5; }
+.my-appointment-filter.selected { border-color: #a6d9d5; background: #edf9f8; color: #087f7c; }
+.my-appointments-date-filters { display: flex; align-items: flex-end; gap: 10px; margin: 0 0 14px; }
+.my-appointments-date-filters label { display: grid; gap: 4px; color: #788698; font-size: 11px; }
+.my-appointments-date-filters input { min-height: 32px; padding: 4px 8px; border: 1px solid #e2e8ee; border-radius: 5px; background: #fff; color: #45566b; font: inherit; }
 .my-appointment-list { display: grid; gap: 13px; }
-.my-appointment-card { display: flex; align-items: flex-start; gap: 15px; padding: 17px; }
+.my-appointments-pagination { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; color: #8491a0; font-size: 12px; }
+.my-appointments-pagination > div { display: flex; align-items: center; gap: 10px; }
+.my-appointment-card { display: flex; align-items: flex-start; gap: 15px; padding: var(--card-padding); }
 .appointment-date { width: 47px; height: 49px; display: flex; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; border-radius: 6px; background: #edf8f7; color: #148a85; }
-.appointment-date strong { font-size: 14px; }
-.appointment-date span { margin-top: 3px; font-size: 11px; }
+.appointment-date strong { font-size: clamp(14px, calc(13px + .12vw), 16px); }
+.appointment-date span { margin-top: 3px; font-size: clamp(11px, calc(10px + .1vw), 12px); }
 .my-appointment-details { flex: 1; }
 .appointment-card-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-.appointment-card-heading h2 { margin: 0; color: #304158; font-size: 13px; }
-.my-appointment-details > p { margin: 7px 0 0; color: #7f8b9b; font-size: 12px; }
-.card-actions { display: flex; gap: 8px; margin-top: 13px; }
+.appointment-card-heading h2 { margin: 0; color: #304158; font-size: clamp(13px, calc(12px + .12vw), 15px); }
+.my-appointment-details > p { margin: 7px 0 0; color: #7f8b9b; font-size: clamp(12px, calc(11px + .1vw), 14px); }
+.card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
 .card-actions .button { min-height: 29px; font-size: 12px; }
 
 @media (max-width: 460px) {
   .my-appointment-card { gap: 10px; padding: 12px; }
   .appointment-card-heading { align-items: flex-start; flex-direction: column; }
+  .card-actions { gap: 7px; }
+  .my-appointments-pagination { align-items: flex-start; flex-direction: column; }
+  .my-appointments-pagination > div { width: 100%; justify-content: space-between; }
+  .my-appointments-date-filters { align-items: stretch; flex-wrap: wrap; }
+  .my-appointments-date-filters label { flex: 1 1 130px; }
+  .my-appointments-date-filters input { width: 100%; min-height: 38px; }
+}
+
+@media (min-width: 1920px) {
+  .my-appointment-list { gap: 18px; }
+  .my-appointment-card { gap: 20px; }
+  .appointment-date { width: 58px; height: 60px; }
+  .appointment-date strong { font-size: 18px; }
+  .appointment-date span { font-size: 13px; }
+  .appointment-card-heading h2 { font-size: 17px; }
+  .my-appointment-details > p { font-size: 15px; }
+  .card-actions { gap: 10px; margin-top: 17px; }
+  .card-actions .button { min-height: 36px; font-size: 14px; }
+  .my-appointments-pagination { margin-top: 18px; font-size: 14px; }
+}
+
+@media (min-width: 3600px) {
+  .my-appointment-list { gap: 22px; }
+  .my-appointment-card { gap: 24px; }
+  .appointment-date { width: 68px; height: 70px; }
+  .appointment-date strong { font-size: 21px; }
+  .appointment-date span { font-size: 15px; }
+  .appointment-card-heading h2 { font-size: 19px; }
+  .my-appointment-details > p { font-size: 17px; }
+  .my-appointments-filters { gap: 10px; margin-bottom: 18px; }
+  .my-appointment-filter { min-height: 40px; padding: 0 15px; font-size: 16px; }
+  .my-appointments-date-filters { gap: 14px; margin-bottom: 18px; }
+  .my-appointments-date-filters label { font-size: 14px; }
+  .my-appointments-date-filters input { min-height: 40px; padding: 6px 10px; }
+  .my-appointments-pagination { font-size: 16px; }
 }

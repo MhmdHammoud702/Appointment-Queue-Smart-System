@@ -7,18 +7,19 @@ import type { ApiUser, LoginFields, RegisterFields } from "../shared/types";
 import { loginSchema, registerSchema } from "../shared/validation";
 import "./SignIn.css";
 
+export type AuthMode = "login" | "register";
+
 type SignInProps = {
   onSignedIn: (user: ApiUser, token: string) => void;
+  mode: AuthMode;
+  onModeChange: (mode: AuthMode) => void;
   message?: string;
 };
-
-type AuthMode = "login" | "register";
 
 const emptyLogin: LoginFields = { email: "", password: "" };
 const emptyRegistration: RegisterFields = { fullName: "", email: "", phone: "", password: "" };
 
-export function SignIn({ onSignedIn, message = "" }: SignInProps) {
-  const [mode, setMode] = useState<AuthMode>("login");
+export function SignIn({ onSignedIn, mode, onModeChange, message = "" }: SignInProps) {
   const [login, setLogin] = useState(emptyLogin);
   const [registration, setRegistration] = useState(emptyRegistration);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -27,7 +28,7 @@ export function SignIn({ onSignedIn, message = "" }: SignInProps) {
   const isRegistering = mode === "register";
 
   function changeMode(nextMode: AuthMode) {
-    setMode(nextMode);
+    onModeChange(nextMode);
     setErrors({});
     setRequestError("");
   }

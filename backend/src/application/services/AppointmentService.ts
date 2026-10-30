@@ -69,7 +69,11 @@ export class AppointmentService {
     const service = await Service.findOne({ _id: serviceId, active: true });
     if (!service) throw new DomainError("Active service not found.", 404, "SERVICE_NOT_FOUND");
 
-    const schedule = await StaffSchedule.findOne({ staff: staffId });
+    const [staff, schedule] = await Promise.all([
+      User.findOne({ _id: staffId, role: "Staff", isActive: { $ne: false } }),
+      StaffSchedule.findOne({ staff: staffId })
+    ]);
+    if (!staff) throw new DomainError("Active staff member not found.", 404, "STAFF_NOT_FOUND");
     if (!schedule || !schedule.services.some((id) => id.equals(serviceId))) {
       throw new DomainError("This staff member is not assigned to the selected service.", 400, "STAFF_NOT_QUALIFIED");
     }
@@ -125,17 +129,30 @@ export class AppointmentService {
       customer: customerId,
       service: service.id,
       staff: staff.id,
+      staffNameSnapshot: staff.fullName,
       start,
       end,
       reservedMinutes: getReservedMinuteStarts(start, end),
       status: "Pending"
     });
+    const staffStillActive = await User.exists({
+      _id: staff.id,
+      role: "Staff",
+      isActive: { $ne: false }
+    });
+    if (!staffStillActive) {
+      await Appointment.deleteOne({ _id: appointment.id });
+      throw new DomainError("The selected staff member is no longer available.", 409, "STAFF_UNAVAILABLE");
+    }
     const result = await this.loadAppointmentDetails(appointment.id);
     this.updatePublisher.publishQueueUpdate({ event: "booked", data: result });
     this.updatePublisher.publishAvailabilityUpdate({
       staffId: String(staff.id),
       serviceId: String(service.id),
       date: parts.date
+    });
+    this.updatePublisher.publishAppointmentBooked({
+      customerName: result.customer.fullName
     });
     return result;
   }
@@ -262,7 +279,7 @@ export class AppointmentService {
   async getEligibleStaffAndService(serviceId: string, staffId: string) {
     const [service, staff, schedule] = await Promise.all([
       Service.findOne({ _id: serviceId, active: true }),
-      User.findOne({ _id: staffId, role: "Staff" }),
+      User.findOne({ _id: staffId, role: "Staff", isActive: { $ne: false } }),
       StaffSchedule.findOne({ staff: staffId })
     ]);
     if (!service) throw new DomainError("Active service not found.", 404, "SERVICE_NOT_FOUND");

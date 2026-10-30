@@ -32,11 +32,13 @@ Start the backend separately from the `backend/` folder and make sure its MongoD
 
 The sign-in and customer registration forms share one responsive authentication page and use the backend auth endpoints. Successful authentication stores the backend-issued token for protected API requests. Dashboard, appointment, queue, service, staff, and booking screens use live API data and display loading, empty, error, or success states as appropriate.
 
+For details on the authenticated Socket.IO connection, event audiences, booking toast, and how screens refresh after realtime events, see the [Socket.IO and Real-Time Notifications Guide](../SOCKET-IO-REALTIME-GUIDE.md).
+
 ## Employee roles
 
-- Admins can create staff or receptionist accounts from the Staff page. Staff accounts use `POST /users/staff`; receptionist accounts use `POST /users/receptionists`.
+- Admins can create, deactivate, and reactivate staff or receptionist accounts from the Staff page. Deactivation preserves appointment history and schedules while preventing sign-in. Deactivating Staff cancels their future active appointments and emails affected customers a red rescheduling button. Admins can permanently delete a deactivated Staff account; appointment history is retained with the former staff member's name.
 - Receptionists land on Appointments and also have a Queue page with date-filtered appointments and today's live queue. They can see queue numbers, check-in times, and waiting durations, but cannot call or complete queue entries. Pending appointments must be confirmed first; successful check-in shows the returned queue number. Receptionists cannot access Dashboard, reschedule, or cancel appointments.
 - Staff land on Appointments and Queue. The backend scopes their appointment list to their assigned bookings; queue actions are available to Staff. Admins and Staff can reschedule eligible appointments from the row actions; Receptionists do not see actions the backend does not allow.
 - Admins can access Dashboard, Appointments, Queue, Services, and Staff. Receptionists are created by admins; public registration continues to create Customer accounts only.
 
-The backend has no receptionist-list endpoint, so the Staff page can create receptionist accounts but its staff cards and schedule editor continue to show Staff accounts only.
+The Admin-only employee list displays Staff and Receptionist accounts, including deactivated accounts. Only active Staff accounts have an editable schedule.

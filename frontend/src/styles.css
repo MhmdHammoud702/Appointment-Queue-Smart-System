@@ -4,22 +4,62 @@
   font-family: "DM Sans", "Segoe UI", sans-serif;
   color: #172338;
   background: #f5f7fa;
+  font-size: clamp(14px, calc(13.5px + .12vw), 18px);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   font-weight: 400;
   --navy: #10233d;
   --teal: #0c9e9a;
   --panel-shadow: 0 3px 12px rgba(27, 48, 73, 0.035);
+  --content-max: 1600px;
+  --page-gutter: clamp(14px, 2.1vw, 38px);
+  --card-padding: clamp(13px, 1vw, 20px);
+  --surface-radius: clamp(7px, .55vw, 10px);
 }
 
 * { box-sizing: border-box; }
 
-body { margin: 0; min-width: 320px; min-height: 100vh; font-size: 15px; }
+body { margin: 0; min-width: 320px; min-height: 100vh; font-size: inherit; }
 
 button, input, select { font: inherit; }
 button { cursor: pointer; }
 h1, h2, p { margin-top: 0; }
 
-.panel { min-width: 0; border: 1px solid #e8edf1; border-radius: 7px; background: #fff; box-shadow: var(--panel-shadow); }
+.panel { min-width: 0; border: 1px solid #e8edf1; border-radius: var(--surface-radius); background: #fff; box-shadow: var(--panel-shadow); }
 .strong-cell { color: #33465a; font-weight: 600; }
 .muted-text { color: #99a4b0; font-size: 12px; }
+
+@media (min-width: 1440px) {
+  :root {
+    --page-gutter: clamp(28px, 2vw, 40px);
+    --card-padding: clamp(16px, 1vw, 22px);
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --content-max: 2000px;
+    --page-gutter: 42px;
+    --card-padding: 23px;
+    --surface-radius: 11px;
+    font-size: clamp(16px, calc(15px + .12vw), 18px);
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --content-max: 2300px;
+    --page-gutter: 50px;
+    --card-padding: 26px;
+  }
+}
+
+@media (min-width: 3600px) {
+  :root {
+    --content-max: 3200px;
+    --page-gutter: 64px;
+    --card-padding: 30px;
+    --surface-radius: 13px;
+    font-size: 18px;
+  }
+}

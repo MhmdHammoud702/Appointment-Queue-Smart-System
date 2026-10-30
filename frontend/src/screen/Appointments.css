@@ -9,7 +9,7 @@
 .appointment-search .form-field,
 .appointment-date-control {
   color: #647489;
-  font-size: 11px;
+  font-size: clamp(11px, calc(10px + .12vw), 13px);
 }
 
 .appointment-date-control {
@@ -36,7 +36,7 @@
 .appointment-sort-label {
   padding-bottom: 10px;
   color: #8995a4;
-  font-size: 11px;
+  font-size: clamp(11px, calc(10px + .1vw), 13px);
   white-space: nowrap;
 }
 
@@ -58,7 +58,7 @@
   border-radius: 5px;
   background: #fff;
   color: #788698;
-  font-size: 11px;
+  font-size: clamp(11px, calc(10px + .1vw), 13px);
   white-space: nowrap;
   cursor: pointer;
 }
@@ -91,13 +91,14 @@
 }
 
 .appointment-row-menu-items {
-  position: absolute;
-  z-index: 3;
-  top: calc(100% + 5px);
-  right: 0;
+  position: fixed;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   min-width: 165px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
   padding: 6px;
   border: 1px solid #e2e8ee;
   border-radius: 6px;
@@ -148,9 +149,34 @@
   }
 }
 
+@media (min-width: 761px) and (max-width: 960px) {
+  .appointment-controls {
+    grid-template-columns: minmax(0, 1fr) minmax(145px, .7fr);
+  }
+
+  .appointment-search {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 460px) {
   .appointment-controls {
     grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 1920px) {
+    .appointment-controls { gap: 16px; margin-bottom: 20px; }
+    .appointment-controls { grid-template-columns: minmax(300px, 1fr) 210px minmax(220px, 260px) auto; }
+    .appointment-date-control input { min-height: 42px; padding: 9px 13px; }
+    .filter-row { gap: 9px; margin-bottom: 18px; }
+    .appointment-filter { min-height: 38px; padding: 0 14px; }
+    .table-panel { padding: 8px 20px; }
+  }
+
+  @media (min-width: 2560px) {
+    .appointment-controls { grid-template-columns: minmax(360px, 1fr) 250px minmax(260px, 320px) auto; gap: 20px; }
+    .appointment-date-control input { min-height: 48px; }
+    .appointment-filter { min-height: 44px; padding: 0 18px; }
   }
 
   .appointment-search {

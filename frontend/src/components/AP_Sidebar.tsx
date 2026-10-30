@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { getHomeScreen, screenPaths } from "../shared/navigation";
 import type { ScreenName, UserRole } from "../shared/types";
 import "./AP_Sidebar.css";
 
@@ -6,7 +8,9 @@ type AP_SidebarProps = {
   activeScreen: ScreenName;
   role: UserRole;
   fullName: string;
-  onNavigate: (screen: ScreenName) => void;
+  realtimeStatus: "connecting" | "live" | "offline";
+  menuOpen: boolean;
+  onMenuOpenChange: (open: boolean) => void;
   onLogout: () => void;
 };
 
@@ -33,19 +37,17 @@ const receptionistNavigation: { name: ScreenName; symbol: string }[] = [
   { name: "Queue", symbol: "◷" },
 ];
 
-export function AP_Sidebar({ activeScreen, role, fullName, onNavigate, onLogout }: AP_SidebarProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
-
+export function AP_Sidebar({ activeScreen, role, fullName, realtimeStatus, menuOpen, onMenuOpenChange, onLogout }: AP_SidebarProps) {
   useEffect(() => {
     if (!menuOpen) return;
 
     function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape") onMenuOpenChange(false);
     }
 
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [menuOpen]);
+  }, [menuOpen, onMenuOpenChange]);
 
   const navigation = role === "Admin"
     ? adminNavigation
@@ -65,50 +67,82 @@ export function AP_Sidebar({ activeScreen, role, fullName, onNavigate, onLogout 
         <button
           aria-label="Close navigation menu"
           className="sidebar-backdrop"
-          onClick={() => setMenuOpen(false)}
+          onClick={() => onMenuOpenChange(false)}
           type="button"
         />
       )}
       <aside className={`sidebar${menuOpen ? " menu-open" : ""}`}>
         <div className="sidebar-header">
-          <button className="brand" onClick={() => {
-            setMenuOpen(false);
-            onNavigate(role === "Admin" ? "Dashboard" : navigation[0]!.name);
-          }}>
-            <span className="brand-mark">T</span>
-            <span>TeamFlow</span>
-          </button>
-          <button
-            aria-controls="sidebar-menu"
-            aria-expanded={menuOpen}
-            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-            className="sidebar-menu-button"
-            onClick={() => setMenuOpen((open) => !open)}
-            type="button"
-          >
-            <span />
-            <span />
-            <span />
-            <span className="visually-hidden">{menuOpen ? "Close menu" : "Open menu"}</span>
-          </button>
+          <div className="sidebar-brand-section">
+            <Link
+              className="brand"
+              onClick={() => onMenuOpenChange(false)}
+              to={screenPaths[getHomeScreen(role)]}
+            >
+              <span className="brand-mark">T</span>
+              <span>TeamFlow</span>
+            </Link>
+          </div>
+          <div className="sidebar-header-actions">
+            <span
+              aria-label={`Sidebar live updates ${realtimeStatus}`}
+              className={`sidebar-live-badge sidebar-live-badge-${realtimeStatus}`}
+            >
+              <span className="live-dot" />
+              {realtimeStatus === "live" ? "Live" : realtimeStatus === "connecting" ? "Connecting" : "Offline"}
+            </span>
+            <button
+              aria-controls="sidebar-menu"
+              aria-expanded={menuOpen}
+              aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+              className="sidebar-menu-button"
+              onClick={() => onMenuOpenChange(!menuOpen)}
+              type="button"
+            >
+              <span />
+              <span />
+              <span />
+              <span className="visually-hidden">{menuOpen ? "Close menu" : "Open menu"}</span>
+            </button>
+          </div>
         </div>
 
         <div className="sidebar-menu" id="sidebar-menu">
+          <div className="sidebar-drawer-header">
+            <Link
+              className="brand"
+              onClick={() => onMenuOpenChange(false)}
+              to={screenPaths[getHomeScreen(role)]}
+            >
+              <span className="brand-mark">T</span>
+              <span>TeamFlow</span>
+            </Link>
+            <span className={`sidebar-live-badge sidebar-live-badge-${realtimeStatus}`}>
+              <span className="live-dot" />
+              {realtimeStatus === "live" ? "Live" : realtimeStatus === "connecting" ? "Connecting" : "Offline"}
+            </span>
+            <button
+              aria-label="Close navigation menu"
+              className="sidebar-menu-button"
+              onClick={() => onMenuOpenChange(false)}
+              type="button"
+            >
+              <span className="sidebar-close-icon" />
+            </button>
+          </div>
           <p className="sidebar-label">WORKSPACE</p>
           <nav aria-label="Main navigation">
             {navigation.map((item) => (
-              <button
+              <Link
                 aria-current={activeScreen === item.name ? "page" : undefined}
                 className={`nav-link ${activeScreen === item.name ? "active" : ""}`}
                 key={item.name}
-                onClick={() => {
-                  setMenuOpen(false);
-                  onNavigate(item.name);
-                }}
+                onClick={() => onMenuOpenChange(false)}
+                to={screenPaths[item.name]}
               >
                 <span className="nav-symbol">{item.symbol}</span>
                 {item.name}
-              </button>
+              </Link>
             ))}
           </nav>
         </div>

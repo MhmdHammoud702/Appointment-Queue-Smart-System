@@ -59,15 +59,28 @@ export type ApiStaff = ApiPerson & {
   phone?: string;
 };
 
+export type ApiEmployee = ApiStaff & {
+  role: EmployeeRole;
+  isActive: boolean;
+};
+
+export type ApiEmployeeStatusUpdate = {
+  employee: ApiEmployee;
+  cancelledAppointments: number;
+  failedNotifications: number;
+};
+
 export type ApiAppointment = {
   _id: string;
   reference: string;
   customer: ApiPerson;
   service: ApiService;
-  staff: ApiStaff;
+  staff: ApiStaff | null;
+  staffNameSnapshot?: string;
   start: string;
   end: string;
   status: AppointmentStatus;
+  cancellationReason?: string;
 };
 
 export type AppointmentView = {
@@ -123,6 +136,11 @@ export type ApiSchedule = {
   weeklyIntervals: ScheduleInterval[];
   daysOff: number[];
   services: (string | ApiService)[];
+};
+
+export type ApiScheduleSaveResult = ApiSchedule & {
+  cancelledAppointments: number;
+  failedNotifications: number;
 };
 
 export type ScheduleFields = {
@@ -183,7 +201,7 @@ export function toAppointmentView(appointment: ApiAppointment): AppointmentView 
     customer,
     initials,
     service: appointment.service.name,
-    staff: appointment.staff.fullName,
+    staff: appointment.staff?.fullName ?? appointment.staffNameSnapshot ?? "Former staff member",
     status: appointment.status,
   };
 }
@@ -203,7 +221,7 @@ export function toQueueView(entry: ApiQueueEntry): QueueView {
     }).format(checkedInAt),
     customer: entry.appointment.customer.fullName,
     service: entry.appointment.service.name,
-    staff: entry.appointment.staff.fullName,
+    staff: entry.appointment.staff?.fullName ?? entry.appointment.staffNameSnapshot ?? "Former staff member",
     wait: `${waitMinutes} min`,
     serviceTime: entry.calledAt
       ? `${Math.max(0, Math.floor((Date.now() - new Date(entry.calledAt).getTime()) / 60_000))} min`

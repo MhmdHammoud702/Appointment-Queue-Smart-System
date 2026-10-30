@@ -10,9 +10,11 @@
     "dev": "tsx watch src/server.ts",
     "seed:admin": "tsx src/infrastructure/database/seedAdmin.ts",
     "test:socket": "node --import tsx --test test/realtime/socket.test.ts",
-    "test": "node --import tsx --test test/domain/appointment.test.ts test/domain/queue.test.ts test/domain/time.test.ts test/presentation/app.test.ts test/presentation/validation.test.ts",
+    "test:overlap-services": "node --import tsx --test test/integration/appointment-overlap-services.test.ts",
+    "test": "node --import tsx --test test/domain/appointment-slot.test.ts test/realtime/socket.test.ts",
     "test:appointment-concurrency": "node --import tsx --test test/integration/appointment-concurrency.test.ts",
-    "test:watch": "node --import tsx --test --watch test/domain/appointment.test.ts test/domain/queue.test.ts test/domain/time.test.ts test/presentation/app.test.ts test/presentation/validation.test.ts"
+    "test:roles": "node --import tsx --test test/integration/backend-roles.test.ts",
+    "test:watch": "node --import tsx --test --watch test/domain/appointment-slot.test.ts test/realtime/socket.test.ts"
   },
   "engines": {
     "node": ">=20"

@@ -3,5 +3,5 @@ node_modules/
 coverage/
 dist/
 npm-debug.log*
-test
 docs
+*.test.ts

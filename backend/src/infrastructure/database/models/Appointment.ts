@@ -7,11 +7,13 @@ export interface AppointmentRecord {
   customer: mongoose.Types.ObjectId;
   service: mongoose.Types.ObjectId;
   staff: mongoose.Types.ObjectId;
+  staffNameSnapshot?: string;
   start: Date;
   end: Date;
   reservedMinutes?: Date[];
   status: AppointmentStatus;
   cancelledAt?: Date;
+  cancellationReason?: string;
 }
 
 const appointmentSchema = new mongoose.Schema<AppointmentRecord>(
@@ -20,11 +22,13 @@ const appointmentSchema = new mongoose.Schema<AppointmentRecord>(
     customer: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     service: { type: mongoose.Schema.Types.ObjectId, ref: "Service", required: true },
     staff: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    staffNameSnapshot: { type: String, trim: true, maxlength: 120 },
     start: { type: Date, required: true },
     end: { type: Date, required: true },
     reservedMinutes: { type: [Date], default: undefined, select: false },
     status: { type: String, enum: APPOINTMENT_STATUSES, default: "Pending" },
-    cancelledAt: Date
+    cancelledAt: Date,
+    cancellationReason: { type: String, trim: true, maxlength: 200 }
   },
   { timestamps: true, optimisticConcurrency: true, autoIndex: false }
 );

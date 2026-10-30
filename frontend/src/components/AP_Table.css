@@ -1,9 +1,21 @@
 .table-scroll { overflow-x: auto; }
 .table-scroll table { width: 100%; border-collapse: collapse; background: #fff; text-align: left; white-space: nowrap; }
 .table-scroll thead { background: #f8f9fb; }
-.table-scroll th { padding: 9px 10px; color: #8491a0; font-size: 11px; font-weight: 600; }
-.table-scroll td { padding: 10px; border-bottom: 1px solid #f0f2f4; color: #68778a; font-size: 12px; }
+.table-scroll th { padding: 9px 10px; color: #8491a0; font-size: clamp(11px, calc(10px + .1vw), 13px); font-weight: 600; }
+.table-scroll td { padding: 10px; border-bottom: 1px solid #f0f2f4; color: #68778a; font-size: clamp(12px, calc(11px + .12vw), 14px); }
 .table-scroll tbody tr:last-child td { border-bottom: 0; }
 .table-sort-button { color: #8491a0; font-size: 11px; font-weight: 600; }
 .table-footer { display: flex; justify-content: space-between; align-items: center; min-height: 38px; padding: 0 10px; border-top: 1px solid #edf0f3; color: #8491a0; font-size: 11px; }
 .table-pagination { display: flex; align-items: center; gap: 5px; }
+
+@media (min-width: 1920px) {
+  .table-scroll th { padding: 12px 14px; font-size: 14px; }
+  .table-scroll td { padding: 14px; font-size: 15px; }
+  .table-footer { min-height: 46px; padding: 0 14px; font-size: 13px; }
+}
+
+@media (min-width: 2560px) {
+  .table-scroll th { padding: 15px 18px; font-size: 16px; }
+  .table-scroll td { padding: 17px 18px; font-size: 17px; }
+  .table-footer { min-height: 54px; font-size: 14px; }
+}

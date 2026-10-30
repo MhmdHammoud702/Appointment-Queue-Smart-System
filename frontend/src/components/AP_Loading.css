@@ -1,3 +1,13 @@
 .ap-loading { display: grid; gap: 12px; padding: 16px; }
 .loading-row { height: 38px; border-radius: 5px; background: linear-gradient(90deg, #f0f2f5 25%, #f8f9fa 50%, #f0f2f5 75%); background-size: 200% 100%; animation: loading-shimmer 1.3s infinite; }
 @keyframes loading-shimmer { to { background-position: -200% 0; } }
+
+@media (min-width: 1920px) {
+  .ap-loading { gap: 15px; padding: 20px; }
+  .loading-row { height: 46px; }
+}
+
+@media (min-width: 3600px) {
+  .ap-loading { gap: 18px; padding: 26px; }
+  .loading-row { height: 56px; }
+}

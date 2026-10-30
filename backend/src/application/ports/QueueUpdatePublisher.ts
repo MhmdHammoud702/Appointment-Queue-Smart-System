@@ -19,12 +19,20 @@ export type AvailabilityUpdate = {
   date: string;
 };
 
+export type AppointmentBookedNotification = {
+  customerName: string;
+};
+
 export interface QueueUpdatePublisher {
   publishQueueUpdate(update: QueueUpdate): void;
   publishAvailabilityUpdate(update: AvailabilityUpdate): void;
+  publishAppointmentBooked(notification: AppointmentBookedNotification): void;
+  revokeUserAccess(userId: string): void;
 }
 
 export const noQueueUpdatePublisher: QueueUpdatePublisher = {
   publishQueueUpdate: () => undefined,
-  publishAvailabilityUpdate: () => undefined
+  publishAvailabilityUpdate: () => undefined,
+  publishAppointmentBooked: () => undefined,
+  revokeUserAccess: () => undefined
 };

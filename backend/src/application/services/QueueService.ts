@@ -38,6 +38,15 @@ export class QueueService {
     ]);
     if (!appointment) throw new DomainError("Appointment not found.", 404, "APPOINTMENT_NOT_FOUND");
     assertAppointmentTransition(appointment.status, "Checked In");
+    const appointmentDate = getLocalDateParts(appointment.start, env.BUSINESS_TIME_ZONE).date;
+    const today = getLocalDateParts(new Date(), env.BUSINESS_TIME_ZONE).date;
+    if (appointmentDate !== today) {
+      throw new DomainError(
+        "Appointments can only be checked in on their scheduled date.",
+        409,
+        "APPOINTMENT_NOT_TODAY"
+      );
+    }
 
     const queueDate = getLocalDateParts(new Date(), env.BUSINESS_TIME_ZONE).date;
     // $inc is atomic, so simultaneous check-ins receive different numbers.

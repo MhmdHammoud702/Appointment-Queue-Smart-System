@@ -6,6 +6,7 @@ export interface UserRecord {
   phone: string;
   passwordHash: string;
   role: "Customer" | "Staff" | "Receptionist" | "Admin";
+  isActive: boolean;
 }
 
 const userSchema = new mongoose.Schema<UserRecord>(
@@ -14,7 +15,8 @@ const userSchema = new mongoose.Schema<UserRecord>(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     phone: { type: String, required: true, trim: true, maxlength: 30 },
     passwordHash: { type: String, required: true, select: false },
-    role: { type: String, enum: ["Customer", "Staff", "Receptionist", "Admin"], default: "Customer" }
+    role: { type: String, enum: ["Customer", "Staff", "Receptionist", "Admin"], default: "Customer" },
+    isActive: { type: Boolean, default: true }
   },
   { timestamps: true }
 );
