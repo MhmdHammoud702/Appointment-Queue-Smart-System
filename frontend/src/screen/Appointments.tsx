@@ -75,6 +75,7 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
   const [staffNames, setStaffNames] = useState<string[]>([]);
   const [staffError, setStaffError] = useState("");
   const [selectedDate, setSelectedDate] = useState(today);
+  const [dateFilter, setDateFilter] = useState<"all" | "custom">("all");
   const [selectedStaff, setSelectedStaff] = useState("");
   const [filter, setFilter] = useState<(typeof filters)[number]>("All");
   const [search, setSearch] = useState("");
@@ -91,10 +92,12 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
     setLoading(true);
     setRequestError("");
     try {
-      const range = {
-        from: localDateTimeToIso(selectedDate, "00:00"),
-        to: new Date(new Date(localDateTimeToIso(nextDate(selectedDate), "00:00")).getTime() - 1).toISOString(),
-      };
+      const range = dateFilter === "custom"
+        ? {
+          from: localDateTimeToIso(selectedDate, "00:00"),
+          to: new Date(new Date(localDateTimeToIso(nextDate(selectedDate), "00:00")).getTime() - 1).toISOString(),
+        }
+        : {};
       const results = await appointmentsApi.list(range);
       setRecords(results);
       setItems(results.map(toAppointmentView));
@@ -103,7 +106,7 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
     } finally {
       setLoading(false);
     }
-  }, [selectedDate]);
+  }, [dateFilter, selectedDate]);
 
   useEffect(() => {
     void loadAppointments();
@@ -270,17 +273,28 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
           value={search}
           onChange={setSearch}
         />
-        <label className="appointment-date-control">
-          Date
-          <input
-            aria-label="Appointment date"
-            onChange={(event) => {
-              if (event.target.value) setSelectedDate(event.target.value);
-            }}
-            type="date"
-            value={selectedDate}
-          />
-        </label>
+        <div className="appointment-date-control">
+          <label htmlFor="appointment-date-filter">Date range</label>
+          <select
+            id="appointment-date-filter"
+            aria-label="Appointment date filter"
+            onChange={(event) => setDateFilter(event.target.value === "custom" ? "custom" : "all")}
+            value={dateFilter}
+          >
+            <option value="all">All dates</option>
+            <option value="custom">Custom date</option>
+          </select>
+          {dateFilter === "custom" && (
+            <input
+              aria-label="Appointment date"
+              onChange={(event) => {
+                if (event.target.value) setSelectedDate(event.target.value);
+              }}
+              type="date"
+              value={selectedDate}
+            />
+          )}
+        </div>
         {role !== "Customer" && (
           <AP_Select
             label="Staff"

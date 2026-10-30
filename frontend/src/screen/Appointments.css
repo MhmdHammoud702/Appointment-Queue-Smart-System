@@ -18,7 +18,8 @@
   gap: 7px;
 }
 
-.appointment-date-control input {
+.appointment-date-control input,
+.appointment-date-control select {
   min-height: 36px;
   padding: 7px 10px;
   border: 1px solid #dfe5eb;
@@ -141,10 +142,14 @@
 
 @media (max-width: 760px) {
   .appointment-controls {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
   .appointment-search {
+    grid-column: 1 / -1;
+  }
+
+  .appointment-date-control {
     grid-column: 1 / -1;
   }
 }
@@ -164,21 +169,6 @@
     grid-template-columns: 1fr;
   }
 
-  @media (min-width: 1920px) {
-    .appointment-controls { gap: 16px; margin-bottom: 20px; }
-    .appointment-controls { grid-template-columns: minmax(300px, 1fr) 210px minmax(220px, 260px) auto; }
-    .appointment-date-control input { min-height: 42px; padding: 9px 13px; }
-    .filter-row { gap: 9px; margin-bottom: 18px; }
-    .appointment-filter { min-height: 38px; padding: 0 14px; }
-    .table-panel { padding: 8px 20px; }
-  }
-
-  @media (min-width: 2560px) {
-    .appointment-controls { grid-template-columns: minmax(360px, 1fr) 250px minmax(260px, 320px) auto; gap: 20px; }
-    .appointment-date-control input { min-height: 48px; }
-    .appointment-filter { min-height: 44px; padding: 0 18px; }
-  }
-
   .appointment-search {
     grid-column: auto;
   }
@@ -186,4 +176,19 @@
   .appointment-sort-label {
     display: none;
   }
+}
+
+@media (min-width: 1920px) {
+  .appointment-controls { gap: 16px; margin-bottom: 20px; }
+  .appointment-controls { grid-template-columns: minmax(300px, 1fr) 210px minmax(220px, 260px) auto; }
+  .appointment-date-control input, .appointment-date-control select { min-height: 42px; padding: 9px 13px; }
+  .filter-row { gap: 9px; margin-bottom: 18px; }
+  .appointment-filter { min-height: 38px; padding: 0 14px; }
+  .table-panel { padding: 8px 20px; }
+}
+
+@media (min-width: 2560px) {
+  .appointment-controls { grid-template-columns: minmax(360px, 1fr) 250px minmax(260px, 320px) auto; gap: 20px; }
+  .appointment-date-control input, .appointment-date-control select { min-height: 48px; }
+  .appointment-filter { min-height: 44px; padding: 0 18px; }
 }

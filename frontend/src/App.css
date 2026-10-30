@@ -50,7 +50,6 @@
 .avatar-purple { width: 29px; height: 29px; background: #eee8ff; color: #7553bc; }
 
 .page-content { width: 100%; max-width: var(--content-max); flex: 1; margin: 0 auto; padding: clamp(22px, 2.1vw, 34px) var(--page-gutter) 40px; }
-.app-footer { width: 100%; max-width: var(--content-max); display: flex; justify-content: space-between; margin: 0 auto; padding: 13px var(--page-gutter) 17px; border-top: 1px solid #e8edf1; color: #95a0ad; font-size: 11px; }
 
 @media (max-width: 760px) {
   .app-shell { flex-direction: column; }
@@ -73,7 +72,6 @@
   .main-area { transition: filter .24s ease; }
   .app-shell.mobile-menu-open .main-area { filter: blur(4px); }
   .page-content { min-height: 0; padding: 20px 15px 24px; }
-  .app-footer { gap: 10px; padding: 12px 15px; font-size: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -92,7 +90,6 @@
   .topbar-right { gap: 28px; }
   .topbar-inner { gap: 24px; }
   .page-content { padding-top: 40px; padding-bottom: 48px; }
-  .app-footer { padding-top: 17px; padding-bottom: 20px; font-size: 12px; }
   .panel-heading h2 { font-size: 15px; }
   .panel-heading p { font-size: 14px; }
 }
@@ -110,5 +107,4 @@
   .main-area { width: 100%; }
   .topbar { height: 50px; flex-basis: 50px; padding: 0 12px; }
   .page-content { padding: 15px 12px 22px; }
-  .app-footer { display: none; }
 }

@@ -384,10 +384,6 @@ function App() {
             <Route path="*" element={<Navigate replace to={homePath} />} />
           </Routes>
         </div>
-        <footer className="app-footer">
-          <span>TeamFlow · Smart Appointment &amp; Queue Management</span>
-          <span>Signed in as {user.email}</span>
-        </footer>
       </main>
     </div>
   );
