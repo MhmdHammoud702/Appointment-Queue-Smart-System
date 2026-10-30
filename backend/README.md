@@ -15,7 +15,7 @@ npm install
 Copy-Item .env.example .env
 ```
 
-Open `.env` and set `JWT_SECRET` to a private random value at least 24 characters long. Set `MONGODB_URI` if MongoDB is not using the local replica-set default. Then start the API:
+Open `.env` and set `JWT_SECRET` to a private random value at least 24 characters long. Set `MONGODB_URI` if MongoDB is not using the local replica-set default. `CLIENT_ORIGIN` accepts a comma-separated list of frontend origins, for example `http://localhost:5173,https://appointments.example.com`; use origins only (scheme, host, and optional port, with no path). The first origin is used when generating links in emails. Then start the API:
 
 ```bash
 npm run dev

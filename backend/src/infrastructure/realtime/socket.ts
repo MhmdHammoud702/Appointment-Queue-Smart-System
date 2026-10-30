@@ -19,7 +19,7 @@ export function createSocketServer(
     Boolean(await User.exists({ _id: userId, isActive: { $ne: false } }))
 ) {
   const io = new Server({
-    cors: { origin: env.CLIENT_ORIGIN, credentials: true }
+    cors: { origin: env.CLIENT_ORIGINS, credentials: true }
   });
 
   io.use(async (socket, next) => {

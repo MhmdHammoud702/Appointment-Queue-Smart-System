@@ -273,7 +273,7 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
           value={search}
           onChange={setSearch}
         />
-        <div className="appointment-date-control">
+        <div className={`appointment-date-control${dateFilter === "custom" ? " has-custom-date" : ""}`}>
           <label htmlFor="appointment-date-filter">Date range</label>
           <select
             id="appointment-date-filter"

@@ -1,6 +1,6 @@
 .appointment-controls {
   display: grid;
-  grid-template-columns: minmax(230px, 1fr) 170px minmax(180px, 220px) auto;
+  grid-template-columns: minmax(230px, 1fr) minmax(280px, .9fr) minmax(180px, 220px) auto;
   align-items: end;
   gap: 12px;
   margin: 0 0 16px;
@@ -13,13 +13,24 @@
 }
 
 .appointment-date-control {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 7px;
+}
+
+.appointment-date-control.has-custom-date {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.appointment-date-control label {
+  grid-column: 1 / -1;
 }
 
 .appointment-date-control input,
 .appointment-date-control select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   min-height: 36px;
   padding: 7px 10px;
   border: 1px solid #dfe5eb;
@@ -154,7 +165,7 @@
   }
 }
 
-@media (min-width: 761px) and (max-width: 960px) {
+@media (min-width: 761px) and (max-width: 1180px) {
   .appointment-controls {
     grid-template-columns: minmax(0, 1fr) minmax(145px, .7fr);
   }
