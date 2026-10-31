@@ -40,6 +40,12 @@ npm run seed:admin
 
 The script refuses to overwrite an existing account. Clear the four bootstrap values after the administrator has been created.
 
+### Logging
+
+The backend uses Winston for application logs. Logs are written to the console and to `backend/logs/combined.log`; errors are also written to `backend/logs/error.log`. Each line uses `YYYY-MM-DD HH:mm | CODE | error info` in UTC. Log files rotate at 5 MB and retain up to five files per transport. The `logs/` directory is Git-ignored.
+
+Set `LOG_LEVEL` in `.env` to `error`, `warn`, `info`, `http`, `verbose`, `debug`, or `silly`; it defaults to `info`. Request failures include method, path, status/code, and authenticated role/id where available. Authorization headers, tokens, passwords, and request bodies are not logged.
+
 ### Optional email
 
 Emails are sent for appointment confirmation, cancellation, and rescheduling when `SMTP_HOST`, `SMTP_USER`, and `SMTP_PASSWORD` are set. Leave them blank for local development without SMTP. Email sending errors are returned as request errors and logged by the server.
@@ -50,7 +56,16 @@ Emails are sent for appointment confirmation, cancellation, and rescheduling whe
 npm test
 ```
 
-The current workspace does not contain the test files referenced by this script, so `npm test` currently fails until those files are restored or replaced. Database-backed booking validation requires a reachable MongoDB instance.
+`npm test` runs the database-free appointment-slot and Socket.IO tests. Database-backed API coverage requires a reachable MongoDB test instance.
+
+Run the end-to-end API journey through Customer, Receptionist, Staff, and Admin roles with:
+
+```powershell
+$env:TEST_MONGODB_URI = "mongodb://127.0.0.1:27017/?directConnection=true"
+npm run test:roles
+```
+
+The test uses and drops a uniquely named database. Never point `TEST_MONGODB_URI` at production.
 
 To exercise appointment concurrency against the real API with disposable data,
 set `TEST_MONGODB_URI` to a reachable MongoDB server URI and run:
@@ -91,6 +106,7 @@ src/
     config/                Validated environment settings
     database/              MongoDB connection, Mongoose models, admin bootstrap
     email/                 SMTP email adapter
+    logging/               Winston logger and error serialization
   presentation/
     controllers/           HTTP request and response handling
     middleware/            Authentication, permissions, errors

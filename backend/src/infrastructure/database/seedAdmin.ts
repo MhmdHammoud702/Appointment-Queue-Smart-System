@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { connectDatabase } from "./connectDatabase.js";
 import { User } from "./models/User.js";
+import { logger, serializeError } from "../logging/logger.js";
 
 async function seedAdmin() {
   const fullName = process.env.ADMIN_NAME?.trim();
@@ -26,13 +27,13 @@ async function seedAdmin() {
 
     const passwordHash = await bcrypt.hash(password, 12);
     await User.create({ fullName, email, phone, passwordHash, role: "Admin" });
-    console.log(`Administrator account created for ${email}.`);
+    logger.info("Administrator account created.", { email });
   } finally {
     await mongoose.disconnect();
   }
 }
 
 seedAdmin().catch((error: unknown) => {
-  console.error("Admin seed failed:", error);
+  logger.error("Admin seed failed.", { error: serializeError(error) });
   process.exitCode = 1;
 });

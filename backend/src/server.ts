@@ -3,25 +3,37 @@ import { createApp } from "./app.js";
 import { startNoShowJob } from "./application/jobs/noShowJob.js";
 import { env } from "./infrastructure/config/env.js";
 import { connectDatabase } from "./infrastructure/database/connectDatabase.js";
+import { logger, serializeError } from "./infrastructure/logging/logger.js";
 import { createSocketServer } from "./infrastructure/realtime/socket.js";
 
-await connectDatabase();
+try {
+  await connectDatabase();
 
-const realtime = createSocketServer();
-const app = createApp(realtime.publisher);
-const httpServer = http.createServer(app);
-realtime.attach(httpServer);
-const noShowJob = startNoShowJob(realtime.publisher);
+  const realtime = createSocketServer();
+  const app = createApp(realtime.publisher);
+  const httpServer = http.createServer(app);
+  realtime.attach(httpServer);
+  const noShowJob = startNoShowJob(realtime.publisher);
 
-httpServer.listen(env.PORT, () => {
-  console.log(`Appointment API listening on http://localhost:${env.PORT}`);
-});
+  httpServer.on("error", (error) => {
+    logger.error("HTTP server error.", { error: serializeError(error) });
+  });
+  httpServer.listen(env.PORT, () => {
+    logger.info("Appointment API listening.", { port: env.PORT });
+  });
 
-function shutdown(signal: string): void {
-  console.log(`${signal} received. Shutting down.`);
-  noShowJob.stop();
-  realtime.io.close(() => process.exit(0));
+  function shutdown(signal: string): void {
+    logger.info("Shutdown requested.", { signal });
+    noShowJob.stop();
+    realtime.io.close(() => {
+      logger.on("finish", () => process.exit(0));
+      logger.end();
+    });
+  }
+
+  process.on("SIGINT", () => shutdown("SIGINT"));
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+} catch (error) {
+  logger.error("Backend startup failed.", { error: serializeError(error) });
+  process.exitCode = 1;
 }
-
-process.on("SIGINT", () => shutdown("SIGINT"));
-process.on("SIGTERM", () => shutdown("SIGTERM"));

@@ -1,6 +1,7 @@
 import { DomainError } from "../../domain/DomainError.js";
 import { getLocalDateParts } from "../../domain/time.js";
 import { env } from "../../infrastructure/config/env.js";
+import { logger, serializeError } from "../../infrastructure/logging/logger.js";
 import {
   Appointment,
   QueueEntry,
@@ -110,10 +111,10 @@ export class StaffService {
         if (!(await sendStaffUnavailableEmail(appointment))) failedNotifications += 1;
       } catch (error) {
         failedNotifications += 1;
-        console.error(
-          `Could not send staff-unavailable email for appointment ${appointment.reference}.`,
-          error
-        );
+        logger.error("Could not send staff-unavailable email.", {
+          appointmentReference: appointment.reference,
+          error: serializeError(error)
+        });
       }
     }
 
@@ -255,10 +256,10 @@ export class StaffService {
         if (!(await sendStaffScheduleChangedEmail(appointment, schedule))) failedNotifications += 1;
       } catch (error) {
         failedNotifications += 1;
-        console.error(
-          `Could not send schedule-change email for appointment ${appointment.reference}.`,
-          error
-        );
+        logger.error("Could not send schedule-change email.", {
+          appointmentReference: appointment.reference,
+          error: serializeError(error)
+        });
       }
     }
 

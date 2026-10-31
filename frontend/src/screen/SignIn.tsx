@@ -65,7 +65,7 @@ export function SignIn({ onSignedIn, mode, onModeChange, message = "" }: SignInP
       <section className="auth-window" aria-label="TeamFlow account access">
         <div className="auth-layout">
           <aside className="auth-info">
-            <div className="auth-brand"><span className="auth-brand-mark">≡</span> TeamFlow</div>
+            <div className="auth-brand"><span className="auth-brand-mark">T</span> TeamFlow</div>
             <div className="auth-info-copy">
               <p className="auth-eyebrow">SMART APPOINTMENTS</p>
               <h1>Book appointments online and see your place in the queue.</h1>
@@ -79,6 +79,7 @@ export function SignIn({ onSignedIn, mode, onModeChange, message = "" }: SignInP
           </aside>
 
           <section className="auth-form-panel">
+            <div className="auth-brand auth-mobile-brand"><span className="auth-brand-mark">T</span> TeamFlow</div>
             <div className="auth-switch">
               {isRegistering ? "Already have an account?" : "New here?"}
               <button onClick={() => changeMode(isRegistering ? "login" : "register")} type="button">

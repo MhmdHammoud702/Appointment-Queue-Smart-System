@@ -195,12 +195,17 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
     void loadStaff();
   }, [loadStaff]);
 
-  const visibleAppointments = useMemo(() => items.filter((appointment) => {
-    const matchesStatus = filter === "All" || appointment.status === filter;
+  const filteredAppointments = useMemo(() => items.filter((appointment) => {
+    const matchesDate = dateFilter === "all" || appointment.date === selectedDate;
     const matchesStaff = !selectedStaff || appointment.staff === selectedStaff;
     const searchText = `${appointment.reference} ${appointment.customer} ${appointment.service}`.toLowerCase();
-    return matchesStatus && matchesStaff && searchText.includes(search.toLowerCase());
-  }), [filter, items, search, selectedStaff]);
+    return matchesDate && matchesStaff && searchText.includes(search.trim().toLowerCase());
+  }), [dateFilter, items, search, selectedDate, selectedStaff]);
+
+  const visibleAppointments = useMemo(
+    () => filteredAppointments.filter((appointment) => filter === "All" || appointment.status === filter),
+    [filter, filteredAppointments]
+  );
 
   const canConfirm = role === "Admin" || role === "Receptionist";
   const canCheckIn = role === "Admin" || role === "Receptionist";
@@ -309,7 +314,9 @@ export function Appointments({ role, onReschedule }: AppointmentsProps) {
 
       <div className="filter-row" aria-label="Filter appointments by status">
         {filters.map((name) => {
-          const count = name === "All" ? items.length : items.filter((item) => item.status === name).length;
+          const count = name === "All"
+            ? filteredAppointments.length
+            : filteredAppointments.filter((item) => item.status === name).length;
           return (
             <button
               aria-pressed={filter === name}

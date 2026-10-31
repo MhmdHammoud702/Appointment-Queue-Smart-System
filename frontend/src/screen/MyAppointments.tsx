@@ -72,12 +72,14 @@ export function MyAppointments({ onReschedule }: MyAppointmentsProps) {
   }
 
   const appointments = records.map(toAppointmentView);
-  const filteredAppointments = appointments.filter((appointment) => {
-    const matchesStatus = filter === "All" || appointment.status === filter;
+  const dateFilteredAppointments = appointments.filter((appointment) => {
     const matchesStartDate = !dateFrom || appointment.date >= dateFrom;
     const matchesEndDate = !dateTo || appointment.date <= dateTo;
-    return matchesStatus && matchesStartDate && matchesEndDate;
+    return matchesStartDate && matchesEndDate;
   });
+  const filteredAppointments = dateFilteredAppointments.filter(
+    (appointment) => filter === "All" || appointment.status === filter
+  );
   const pageCount = Math.max(1, Math.ceil(filteredAppointments.length / pageSize));
   const currentPage = Math.min(page, pageCount);
   const visibleAppointments = filteredAppointments.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -98,8 +100,8 @@ export function MyAppointments({ onReschedule }: MyAppointmentsProps) {
           <div className="my-appointments-filters" aria-label="Filter appointments by status">
             {appointmentFilters.map((status) => {
               const count = status === "All"
-                ? appointments.length
-                : appointments.filter((appointment) => appointment.status === status).length;
+                ? dateFilteredAppointments.length
+                : dateFilteredAppointments.filter((appointment) => appointment.status === status).length;
               return (
                 <button
                   aria-pressed={filter === status}

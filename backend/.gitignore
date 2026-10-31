@@ -2,6 +2,7 @@ node_modules/
 .env
 coverage/
 dist/
+logs/
 npm-debug.log*
 docs
 *.test.ts

@@ -48,6 +48,7 @@ function buildAppointmentEmailHtml(
     actionUrl: string;
     accentColor: string;
     extraHtml?: string;
+    previousStart?: Date;
   }
 ): string {
   const serviceName = appointment.service?.name ?? "Appointment";
@@ -55,7 +56,14 @@ function buildAppointmentEmailHtml(
   const details = [
     ["Service", serviceName],
     ["Provider", staffName],
-    ["Date and time", getAppointmentDate(appointment)],
+    ...(options.previousStart
+      ? [["Previous date and time", options.previousStart.toLocaleString("en-GB", {
+          timeZone: env.BUSINESS_TIME_ZONE,
+          dateStyle: "medium",
+          timeStyle: "short"
+        })]]
+      : []),
+    [options.previousStart ? "New date and time" : "Date and time", getAppointmentDate(appointment)],
     ["Reference", appointment.reference]
   ];
 
@@ -102,7 +110,8 @@ function buildAppointmentEmailHtml(
 
 export async function sendAppointmentEmail(
   appointment: AppointmentEmail,
-  event: "confirmed" | "cancelled" | "rescheduled"
+  event: "confirmed" | "cancelled" | "rescheduled",
+  previousStart?: Date
 ): Promise<void> {
   if (!transporter) return;
 
@@ -134,15 +143,23 @@ export async function sendAppointmentEmail(
   const serviceName = appointment.service?.name ?? "Appointment";
   const staffName = appointment.staff?.fullName ?? appointment.staffNameSnapshot ?? "your provider";
   const date = getAppointmentDate(appointment);
+  const dateDetails = event === "rescheduled" && previousStart
+    ? `Previous date and time: ${previousStart.toLocaleString("en-GB", {
+        timeZone: env.BUSINESS_TIME_ZONE,
+        dateStyle: "medium",
+        timeStyle: "short"
+      })}\nNew date and time: ${date}`
+    : `When: ${date}`;
 
   await transporter.sendMail({
     from: env.EMAIL_FROM,
     to: appointment.customer.email,
     subject: `${design.title}: ${appointment.reference}`,
-    text: `Hello ${appointment.customer.fullName},\n\n${design.message}\n\nService: ${serviceName}\nWith: ${staffName}\nWhen: ${date}\nReference: ${appointment.reference}\n\n${design.actionLabel}: ${actionUrl}\n\nTeamFlow`,
+    text: `Hello ${appointment.customer.fullName},\n\n${design.message}\n\nService: ${serviceName}\nWith: ${staffName}\n${dateDetails}\nReference: ${appointment.reference}\n\n${design.actionLabel}: ${actionUrl}\n\nTeamFlow`,
     html: buildAppointmentEmailHtml(appointment, {
       ...design,
-      actionUrl
+      actionUrl,
+      ...(event === "rescheduled" && previousStart ? { previousStart } : {})
     })
   });
 }

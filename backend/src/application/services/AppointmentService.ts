@@ -233,7 +233,8 @@ export class AppointmentService {
       throw new DomainError("Only pending or confirmed appointments can be rescheduled.", 409);
     }
 
-    const previousDate = getLocalDateParts(appointment.start, env.BUSINESS_TIME_ZONE).date;
+    const previousStart = new Date(appointment.start);
+    const previousDate = getLocalDateParts(previousStart, env.BUSINESS_TIME_ZONE).date;
     const start = getFutureAppointmentStart(input);
     const parts = getLocalDateParts(start, env.BUSINESS_TIME_ZONE);
     const { service, schedule } = await this.getEligibleStaffAndService(
@@ -257,7 +258,7 @@ export class AppointmentService {
         date
       });
     }
-    await sendAppointmentEmail(result, "rescheduled");
+    await sendAppointmentEmail(result, "rescheduled", previousStart);
     return result;
   }
 

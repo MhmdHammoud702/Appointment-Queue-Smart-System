@@ -4,6 +4,7 @@
 .auth-info { display: flex; flex-direction: column; padding: clamp(26px, 3vw, 48px) clamp(24px, 3.2vw, 54px); background: #10233e; color: #fff; }
 .auth-brand { display: flex; align-items: center; gap: 8px; font-family: "Manrope", sans-serif; font-size: 13px; font-weight: 800; }
 .auth-brand-mark { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 6px; background: #078b89; color: #fff; font-size: 16px; }
+.auth-mobile-brand { display: none; }
 .auth-info-copy { width: min(100%, 440px); margin: auto; padding: 48px 0; }
 .auth-eyebrow { margin-bottom: 12px; color: #58cec4; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; }
 .auth-info h1 { max-width: 380px; margin: 0 0 22px; color: #fff; font-family: "Manrope", sans-serif; font-size: clamp(24px, calc(20px + 1vw), 36px); line-height: 1.25; }
@@ -30,6 +31,7 @@
   .auth-layout { min-height: 100vh; min-height: 100dvh; grid-template-columns: 1fr; }
   .auth-info { display: none; }
   .auth-form-panel { width: 100%; min-height: 100vh; min-height: 100dvh; margin: 0 auto; padding: 20px 26px 28px; }
+  .auth-mobile-brand { display: flex; margin-bottom: 24px; color: #10233e; }
   .auth-form-content { padding: 24px 0; }
 }
 
