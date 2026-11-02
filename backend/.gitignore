@@ -3,6 +3,3 @@ node_modules/
 coverage/
 dist/
 logs/
-npm-debug.log*
-docs
-*.test.ts

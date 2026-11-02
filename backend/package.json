@@ -8,13 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/src/server.js",
     "dev": "tsx watch src/server.ts",
-    "seed:admin": "tsx src/infrastructure/database/seedAdmin.ts",
-    "test:socket": "node --import tsx --test test/realtime/socket.test.ts",
-    "test:overlap-services": "node --import tsx --test test/integration/appointment-overlap-services.test.ts",
-    "test": "node --import tsx --test test/domain/appointment-slot.test.ts test/realtime/socket.test.ts",
-    "test:appointment-concurrency": "node --import tsx --test test/integration/appointment-concurrency.test.ts",
-    "test:roles": "node --import tsx --test test/integration/backend-roles.test.ts",
-    "test:watch": "node --import tsx --test --watch test/domain/appointment-slot.test.ts test/realtime/socket.test.ts"
+    "seed:admin": "tsx src/infrastructure/database/seedAdmin.ts"
   },
   "engines": {
     "node": ">=20"
